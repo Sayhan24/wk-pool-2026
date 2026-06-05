@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WK Pool 2026</title>
+<style>
+  :root {
+    --bg: #0a1628;
+    --card: #12203d;
+    --card-hover: #1a2d50;
+    --accent: #c8a84e;
+    --accent2: #e8c85e;
+    --text: #e8e8e8;
+    --text-dim: #8899aa;
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --group-header: #162850;
+    --input-bg: #0d1a30;
+    --border: #253a5a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  header {
+    background: linear-gradient(135deg, #0d1f3c 0%, #162850 50%, #1a3060 100%);
+    text-align: center;
+    padding: 30px 20px 20px;
+    border-bottom: 3px solid var(--accent);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8a84e' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+  header h1 {
+    font-size: 2.5em;
+    font-weight: 800;
+    position: relative;
+    letter-spacing: 2px;
+  }
+  header h1 span { color: var(--accent); }
+  header p {
+    color: var(--text-dim);
+    margin-top: 8px;
+    font-size: 1em;
+    position: relative;
+  }
+  .toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  .toolbar input[type="text"] {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 220px;
+  }
+  .toolbar input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0a1628;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(200,168,78,0.3);
+  }
+  .btn-secondary {
+    background: var(--card-hover);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    background: #253a5a;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .info-bar {
+    text-align: center;
+    padding: 12px;
+    color: var(--text-dim);
+    font-size: 0.85em;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  .info-bar strong { color: var(--accent); }
+  .groups-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .group {
+    background: var(--card);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .group:hover { border-color: var(--accent); }
+  .group-header {
+    background: var(--group-header);
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 1.05em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 2px solid var(--accent);
+  }
+  .group-header .group-letter {
+    background: var(--accent);
+    color: var(--bg);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1em;
+  }
+  .match {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(37,58,90,0.5);
+    gap: 8px;
+  }
+  .match:last-child { border-bottom: none; }
+  .match:hover { background: rgba(26,45,80,0.3); }
+  .team {
+    font-size: 0.92em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .team.home { justify-content: flex-end; text-align: right; }
+  .team.away { justify-content: flex-start; text-align: left; }
+  .team .flag {
+    font-size: 1.3em;
+    flex-shrink: 0;
+  }
+  .score-inputs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .score-inputs input {
+    width: 38px;
+    height: 34px;
+    text-align: center;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: 700;
+  }
+  .score-inputs input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #162850;
+  }
+  .score-inputs span {
+    color: var(--text-dim);
+    font-weight: 700;
+    font-size: 0.9em;
+  }
+  .share-section {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 0 20px 30px;
+    text-align: center;
+  }
+  .share-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .share-box h3 {
+    margin-bottom: 12px;
+    color: var(--accent);
+  }
+  .share-url {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .share-url input {
+    flex: 1;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.85em;
+    font-family: monospace;
+  }
+  .share-url input:focus { outline: none; border-color: var(--accent); }
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--green);
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 700;
+    transition: transform 0.3s;
+    z-index: 999;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Scoreboard */
+  .scoreboard {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .scoreboard-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .scoreboard-header {
+    background: var(--group-header);
+    padding: 16px 20px;
+    border-bottom: 2px solid var(--accent);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .scoreboard-header h3 { color: var(--accent); }
+  .scoreboard-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 80px;
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(37,58,90,0.5);
+    align-items: center;
+  }
+  .scoreboard-row:last-child { border-bottom: none; }
+  .scoreboard-row .rank {
+    font-weight: 800;
+    color: var(--accent);
+    font-size: 1.1em;
+  }
+  .scoreboard-row .name { font-size: 1em; }
+  .scoreboard-row .points {
+    text-align: right;
+    font-weight: 700;
+    font-size: 1.1em;
+    color: var(--green);
+  }
+
+  /* View mode */
+  .view-mode .score-inputs input {
+    background: transparent;
+    border-color: transparent;
+    pointer-events: none;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 0 20px;
+    margin-top: -1px;
+  }
+  .tab {
+    padding: 12px 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95em;
+    transition: all 0.2s;
+  }
+  .tab:first-child { border-radius: 0 0 0 10px; }
+  .tab:last-child { border-radius: 0 0 10px 0; }
+  .tab.active {
+    background: var(--group-header);
+    color: var(--accent);
+    border-bottom-color: var(--group-header);
+  }
+  .tab:hover:not(.active) { color: var(--text); }
+  .hidden { display: none !important; }
+
+  /* Progress bar */
+  .progress-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px 20px 0;
+  }
+  .progress-bar-outer {
+    background: var(--input-bg);
+    border-radius: 10px;
+    height: 18px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 10px;
+    transition: width 0.4s ease;
+    min-width: 0;
+  }
+  .progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82em;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+  .progress-text .count { color: var(--accent); font-weight: 700; }
+
+  /* Filter buttons */
+  .filters {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px 0;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    background: var(--card);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+  }
+  .filter-btn:hover { color: var(--text); border-color: var(--accent); }
+  .filter-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+
+  /* Match filled indicator */
+  .match.filled {
+    border-left: 3px solid var(--green);
+  }
+  .match .check {
+    font-size: 0.8em;
+    margin-left: 2px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .match.filled .check { opacity: 1; }
+
+  /* Group counter badge */
+  .group-count {
+    margin-left: auto;
+    font-size: 0.8em;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+  .group-count.complete { color: var(--green); }
+
+  @media (max-width: 500px) {
+    header h1 { font-size: 1.6em; }
+    .groups-container { grid-template-columns: 1fr; padding: 12px; gap: 14px; }
+    .toolbar { flex-direction: column; align-items: stretch; }
+    .toolbar input[type="text"] { width: 100%; }
+    .match { padding: 8px 10px; gap: 4px; }
+    .team { font-size: 0.82em; }
+    .score-inputs input { width: 32px; height: 30px; font-size: 0.9em; }
+    .share-url { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span>WK</span> POOL 2026</h1>
+  <p>Voorspel alle groepswedstrijden en deel met vrienden</p>
+</header>
+
+<div class="toolbar">
+  <input type="text" id="playerName" placeholder="Jouw naam..." maxlength="30">
+  <button class="btn" onclick="generateLink()">Link maken &amp; delen</button>
+  <button class="btn btn-secondary" onclick="clearAll()">Wissen</button>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('predict')">Voorspellen</div>
+  <div class="tab" onclick="switchTab('scores')">Scorebord</div>
+</div>
+
+<div class="info-bar">
+  Puntentelling: <strong>3 punten</strong> exacte score &bull; <strong>1 punt</strong> juiste uitslag (winst/gelijk/verlies)
+</div>
+
+<div id="predictView">
+  <div class="progress-section">
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
+    <div class="progress-text"><span id="progressLabel"><span class="count">0</span> / 36 wedstrijden ingevuld</span><span id="progressPct">0%</span></div>
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all')">Alle wedstrijden</button>
+    <button class="filter-btn" onclick="setFilter('empty')">Nog in te vullen</button>
+    <button class="filter-btn" onclick="setFilter('filled')">Ingevuld</button>
+  </div>
+  <div class="groups-container" id="groupsContainer"></div>
+</div>
+
+<div id="scoresView" class="hidden">
+  <div class="scoreboard" id="scoreboard"></div>
+</div>
+
+<div class="share-section">
+  <div class="share-box">
+    <h3>Deel je voorspellingen</h3>
+    <p style="color:var(--text-dim);font-size:0.9em;">Klik op "Link maken" om een unieke link te genereren die je kunt delen met vrienden of collega's.</p>
+    <div class="share-url">
+      <input type="text" id="shareUrl" readonly placeholder="Klik op 'Link maken' hierboven...">
+      <button class="btn" onclick="copyLink()">Kopieer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const FLAGS = {
+  "Mexico":"🇲🇽","South Africa":"🇿🇦","South Korea":"🇰🇷","Czechia":"🇨🇿",
+  "Canada":"🇨🇦","Bosnia and Herzegovina":"🇧🇦","Qatar":"🇶🇦","Switzerland":"🇨🇭",
+  "Brazil":"🇧🇷","Haiti":"🇭🇹","Morocco":"🇲🇦","Scotland":"🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  "USA":"🇺🇸","Australia":"🇦🇺","Paraguay":"🇵🇾","Turkiye":"🇹🇷",
+  "Germany":"🇩🇪","Ecuador":"🇪🇨","Curacao":"🇨🇼","Ivory Coast":"🇨🇮",
+  "Japan":"🇯🇵","Netherlands":"🇳🇱","Sweden":"🇸🇪","Tunisia":"🇹🇳",
+  "Belgium":"🇧🇪","Egypt":"🇪🇬","Iran":"🇮🇷","New Zealand":"🇳🇿",
+  "Spain":"🇪🇸","Uruguay":"🇺🇾","Saudi Arabia":"🇸🇦","Cape Verde":"🇨🇻",
+  "France":"🇫🇷","Senegal":"🇸🇳","Norway":"🇳🇴","Iraq":"🇮🇶",
+  "Argentina":"🇦🇷","Algeria":"🇩🇿","Austria":"🇦🇹","Jordan":"🇯🇴",
+  "Portugal":"🇵🇹","Colombia":"🇨🇴","DR Congo":"🇨🇩","Uzbekistan":"🇺🇿",
+  "England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croatia":"🇭🇷","Ghana":"🇬🇭","Panama":"🇵🇦"
+};
+
+const GROUPS = {
+  A: ["Mexico","South Africa","South Korea","Czechia"],
+  B: ["Canada","Bosnia and Herzegovina","Qatar","Switzerland"],
+  C: ["Brazil","Haiti","Morocco","Scotland"],
+  D: ["USA","Australia","Paraguay","Turkiye"],
+  E: ["Germany","Ecuador","Curacao","Ivory Coast"],
+  F: ["Japan","Netherlands","Sweden","Tunisia"],
+  G: ["Belgium","Egypt","Iran","New Zealand"],
+  H: ["Spain","Uruguay","Saudi Arabia","Cape Verde"],
+  I: ["France","Senegal","Norway","Iraq"],
+  J: ["Argentina","Algeria","Austria","Jordan"],
+  K: ["Portugal","Colombia","DR Congo","Uzbekistan"],
+  L: ["England","Croatia","Ghana","Panama"]
+};
+
+function getMatches(teams) {
+  const m = [];
+  for (let i = 0; i < teams.length; i++)
+    for (let j = i + 1; j < teams.length; j++)
+      m.push([teams[i], teams[j]]);
+  return m;
+}
+
+function flag(team) { return FLAGS[team] || ''; }
+
+let viewMode = false;
+
+function buildUI() {
+  const container = document.getElementById('groupsContainer');
+  container.innerHTML = '';
+  for (const [letter, teams] of Object.entries(GROUPS)) {
+    const matches = getMatches(teams);
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'group';
+    if (viewMode) groupDiv.classList.add('view-mode');
+
+    let html = `<div class="group-header"><div class="group-letter">${letter}</div>Groep ${letter}<span class="group-count" id="gc_${letter}">0/6</span></div>`;
+    matches.forEach((m, i) => {
+      const id = `${letter}_${i}`;
+      html += `
+        <div class="match" id="match_${id}">
+          <div class="team home"><span>${m[0]}</span><span class="flag">${flag(m[0])}</span></div>
+          <div class="score-inputs">
+            <input type="number" min="0" max="20" id="${id}_h" data-group="${letter}" data-match="${i}" data-side="h"
+              onchange="onScoreChange()" oninput="this.value=this.value.slice(0,2)">
+            <span>-</span>
+            <input type="number" min="0" max="20" id="${id}_a" data-group="${letter}" data-match="${i}" data-side="a"
+              onchange="onScoreChange()" oninput="this.value=this.value.slice(0,2)">
+            <span class="check">&#10003;</span>
+          </div>
+          <div class="team away"><span class="flag">${flag(m[1])}</span><span>${m[1]}</span></div>
+        </div>`;
+    });
+    groupDiv.innerHTML = html;
+    container.appendChild(groupDiv);
+  }
+}
+
+function getAllPredictions() {
+  const preds = {};
+  for (const [letter, teams] of Object.entries(GROUPS)) {
+    const matches = getMatches(teams);
+    matches.forEach((m, i) => {
+      const h = document.getElementById(`${letter}_${i}_h`).value;
+      const a = document.getElementById(`${letter}_${i}_a`).value;
+      if (h !== '' && a !== '') {
+        preds[`${letter}_${i}`] = `${h}-${a}`;
+      }
+    });
+  }
+  return preds;
+}
+
+function setPredictions(preds) {
+  for (const [key, val] of Object.entries(preds)) {
+    const [h, a] = val.split('-');
+    const hEl = document.getElementById(`${key}_h`);
+    const aEl = document.getElementById(`${key}_a`);
+    if (hEl && aEl) {
+      hEl.value = h;
+      aEl.value = a;
+    }
+  }
+}
+
+function encodePredictions(name, preds) {
+  const data = { n: name, p: preds };
+  const json = JSON.stringify(data);
+  return btoa(unescape(encodeURIComponent(json)));
+}
+
+function decodePredictions(encoded) {
+  try {
+    const json = decodeURIComponent(escape(atob(encoded)));
+    return JSON.parse(json);
+  } catch { return null; }
+}
+
+function generateLink() {
+  const name = document.getElementById('playerName').value.trim() || 'Anoniem';
+  const preds = getAllPredictions();
+  const filled = Object.keys(preds).length;
+  if (filled === 0) {
+    showToast('Vul eerst wat scores in!', true);
+    return;
+  }
+  const encoded = encodePredictions(name, preds);
+  const url = window.location.origin + window.location.pathname + '#' + encoded;
+  document.getElementById('shareUrl').value = url;
+  saveLocal();
+  showToast(`Link gemaakt! (${filled}/36 wedstrijden ingevuld)`);
+}
+
+function copyLink() {
+  const input = document.getElementById('shareUrl');
+  if (!input.value) {
+    showToast('Maak eerst een link aan!', true);
+    return;
+  }
+  navigator.clipboard.writeText(input.value).then(() => {
+    showToast('Link gekopieerd!');
+  }).catch(() => {
+    input.select();
+    document.execCommand('copy');
+    showToast('Link gekopieerd!');
+  });
+}
+
+function clearAll() {
+  document.querySelectorAll('.score-inputs input').forEach(i => i.value = '');
+  document.getElementById('playerName').value = '';
+  document.getElementById('shareUrl').value = '';
+  localStorage.removeItem('wkpool2026');
+  updateProgress();
+  showToast('Alles gewist');
+}
+
+function saveLocal() {
+  const name = document.getElementById('playerName').value.trim();
+  const preds = getAllPredictions();
+  localStorage.setItem('wkpool2026', JSON.stringify({ n: name, p: preds }));
+}
+
+function loadLocal() {
+  const saved = localStorage.getItem('wkpool2026');
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      if (data.n) document.getElementById('playerName').value = data.n;
+      if (data.p) setPredictions(data.p);
+    } catch {}
+  }
+}
+
+function loadFromHash() {
+  const hash = window.location.hash.slice(1);
+  if (!hash) return false;
+  const data = decodePredictions(hash);
+  if (!data) return false;
+
+  viewMode = true;
+  buildUI();
+  if (data.n) document.getElementById('playerName').value = data.n;
+  if (data.p) setPredictions(data.p);
+
+  // Store in scoreboard
+  addToScoreboard(data.n || 'Anoniem', data.p);
+  return true;
+}
+
+// Scoreboard: compare multiple players
+function getStoredPlayers() {
+  const stored = localStorage.getItem('wkpool2026_players');
+  return stored ? JSON.parse(stored) : {};
+}
+
+function addToScoreboard(name, preds) {
+  const players = getStoredPlayers();
+  players[name] = preds;
+  localStorage.setItem('wkpool2026_players', JSON.stringify(players));
+}
+
+function calculatePoints(preds1, preds2) {
+  let points = 0;
+  for (const key of Object.keys(preds1)) {
+    if (!preds2[key]) continue;
+    const [h1, a1] = preds1[key].split('-').map(Number);
+    const [h2, a2] = preds2[key].split('-').map(Number);
+    if (h1 === h2 && a1 === a2) {
+      points += 3;
+    } else {
+      const r1 = Math.sign(h1 - a1);
+      const r2 = Math.sign(h2 - a2);
+      if (r1 === r2) points += 1;
+    }
+  }
+  return points;
+}
+
+function buildScoreboard() {
+  const sb = document.getElementById('scoreboard');
+  const players = getStoredPlayers();
+  const names = Object.keys(players);
+
+  if (names.length < 2) {
+    sb.innerHTML = `<div class="scoreboard-card"><div class="scoreboard-header"><h3>Scorebord</h3></div>
+      <div style="padding:24px;text-align:center;color:var(--text-dim);">
+        Deel je link met vrienden! Als zij hun link openen op jouw apparaat (of jij die van hen), verschijnen ze hier in het scorebord.<br><br>
+        <strong style="color:var(--accent);">Minimaal 2 deelnemers nodig</strong>
+      </div></div>`;
+    return;
+  }
+
+  // Cross-compare: each player's score = average points against all others
+  const scores = names.map(name => {
+    let total = 0;
+    let count = 0;
+    for (const other of names) {
+      if (other === name) continue;
+      total += calculatePoints(players[name], players[other]);
+      count++;
+    }
+    return { name, points: count > 0 ? total : 0, avg: count > 0 ? (total / count).toFixed(1) : 0 };
+  });
+
+  scores.sort((a, b) => b.points - a.points);
+
+  let html = `<div class="scoreboard-card">
+    <div class="scoreboard-header"><h3>Scorebord</h3><span style="color:var(--text-dim)">${names.length} deelnemers</span></div>`;
+  scores.forEach((s, i) => {
+    html += `<div class="scoreboard-row">
+      <div class="rank">#${i + 1}</div>
+      <div class="name">${s.name}</div>
+      <div class="points">${s.points} pt</div>
+    </div>`;
+  });
+  html += `</div>`;
+  sb.innerHTML = html;
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if (tab === 'predict') {
+    document.getElementById('predictView').classList.remove('hidden');
+    document.getElementById('scoresView').classList.add('hidden');
+    document.querySelectorAll('.tab')[0].classList.add('active');
+  } else {
+    document.getElementById('predictView').classList.add('hidden');
+    document.getElementById('scoresView').classList.remove('hidden');
+    document.querySelectorAll('.tab')[1].classList.add('active');
+    buildScoreboard();
+  }
+}
+
+// Progress & visual feedback
+let currentFilter = 'all';
+
+function onScoreChange() {
+  saveLocal();
+  updateProgress();
+  applyFilter();
+}
+
+function updateProgress() {
+  let total = 0, filled = 0;
+  const groupCounts = {};
+  for (const [letter, teams] of Object.entries(GROUPS)) {
+    const matches = getMatches(teams);
+    groupCounts[letter] = { total: matches.length, filled: 0 };
+    matches.forEach((m, i) => {
+      total++;
+      const h = document.getElementById(`${letter}_${i}_h`).value;
+      const a = document.getElementById(`${letter}_${i}_a`).value;
+      const matchEl = document.getElementById(`match_${letter}_${i}`);
+      if (h !== '' && a !== '') {
+        filled++;
+        groupCounts[letter].filled++;
+        matchEl.classList.add('filled');
+      } else {
+        matchEl.classList.remove('filled');
+      }
+    });
+  }
+  const pct = Math.round((filled / total) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').innerHTML = `<span class="count">${filled}</span> / ${total} wedstrijden ingevuld`;
+  document.getElementById('progressPct').textContent = pct + '%';
+
+  for (const [letter, c] of Object.entries(groupCounts)) {
+    const el = document.getElementById(`gc_${letter}`);
+    if (el) {
+      el.textContent = `${c.filled}/${c.total}`;
+      el.classList.toggle('complete', c.filled === c.total);
+    }
+  }
+}
+
+function setFilter(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter() {
+  const groupCards = document.querySelectorAll('.group');
+  const groupKeys = Object.keys(GROUPS);
+  for (const [letter, teams] of Object.entries(GROUPS)) {
+    const matches = getMatches(teams);
+    let groupVisible = false;
+    matches.forEach((m, i) => {
+      const matchEl = document.getElementById(`match_${letter}_${i}`);
+      const isFilled = matchEl.classList.contains('filled');
+      let show = true;
+      if (currentFilter === 'filled') show = isFilled;
+      if (currentFilter === 'empty') show = !isFilled;
+      matchEl.style.display = show ? '' : 'none';
+      if (show) groupVisible = true;
+    });
+    const groupIdx = groupKeys.indexOf(letter);
+    if (groupCards[groupIdx]) {
+      groupCards[groupIdx].style.display = groupVisible ? '' : 'none';
+    }
+  }
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = isError ? 'var(--red)' : 'var(--green)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Init
+buildUI();
+const fromHash = loadFromHash();
+if (!fromHash) {
+  loadLocal();
+  // Also save own predictions to scoreboard on load
+  const name = document.getElementById('playerName').value.trim();
+  const preds = getAllPredictions();
+  if (name && Object.keys(preds).length > 0) {
+    addToScoreboard(name, preds);
+  }
+}
+
+// Update progress on init
+updateProgress();
+</script>
+</body>
+</html>
