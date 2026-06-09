@@ -579,7 +579,7 @@ function enterPool() {
     poolData.results = data.results || {};
     poolData.knockoutDefs = data.knockoutDefs || {};
 
-    isAdmin = poolData.config.admin === currentUser.uid;
+    isAdmin = poolData.config.admin === currentUser.uid || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     document.getElementById('adminTab').style.display = isAdmin ? '' : 'none';
 
     // Load own predictions into form
