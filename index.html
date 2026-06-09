@@ -100,6 +100,17 @@
     background: #253a5a;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
+  .btn-danger {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    font-size: 0.8em;
+  }
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 0.85em;
+  }
   .info-bar {
     text-align: center;
     padding: 12px;
@@ -246,7 +257,7 @@
   .scoreboard {
     max-width: 700px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 20px;
   }
   .scoreboard-card {
     background: var(--card);
@@ -266,7 +277,7 @@
   .scoreboard-header h3 { color: var(--accent); }
   .scoreboard-row {
     display: grid;
-    grid-template-columns: 40px 1fr 80px;
+    grid-template-columns: 40px 1fr 80px 80px;
     padding: 12px 20px;
     border-bottom: 1px solid rgba(37,58,90,0.5);
     align-items: center;
@@ -278,12 +289,21 @@
     font-size: 1.1em;
   }
   .scoreboard-row .name { font-size: 1em; }
+  .scoreboard-row .filled-count {
+    text-align: right;
+    font-size: 0.85em;
+    color: var(--text-dim);
+  }
   .scoreboard-row .points {
     text-align: right;
     font-weight: 700;
     font-size: 1.1em;
     color: var(--green);
   }
+  .scoreboard-row.top1 { background: rgba(200,168,78,0.1); }
+  .scoreboard-row.top1 .rank { font-size: 1.3em; }
+  .scoreboard-row.clickable { cursor: pointer; }
+  .scoreboard-row.clickable:hover { background: var(--card-hover); }
 
   /* View mode */
   .view-mode .score-inputs input {
@@ -377,9 +397,7 @@
   }
 
   /* Match filled indicator */
-  .match.filled {
-    border-left: 3px solid var(--green);
-  }
+  .match.filled { border-left: 3px solid var(--green); }
   .match .check {
     font-size: 0.8em;
     margin-left: 2px;
@@ -397,6 +415,148 @@
   }
   .group-count.complete { color: var(--green); }
 
+  /* Pool tab */
+  .pool-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .pool-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .pool-card h3 {
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .pool-card p {
+    color: var(--text-dim);
+    font-size: 0.9em;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .pool-textarea {
+    width: 100%;
+    min-height: 120px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 0.85em;
+    resize: vertical;
+    margin-bottom: 12px;
+  }
+  .pool-textarea:focus { outline: none; border-color: var(--accent); }
+  .pool-textarea::placeholder { color: var(--text-dim); }
+  .pool-members {
+    margin-top: 16px;
+  }
+  .pool-member {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .pool-member .member-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pool-member .member-name { font-weight: 600; }
+  .pool-member .member-count { color: var(--text-dim); font-size: 0.85em; }
+  .pool-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  /* Results section */
+  .results-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 12px 0;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .results-toggle .arrow {
+    transition: transform 0.2s;
+    font-size: 0.8em;
+  }
+  .results-toggle .arrow.open { transform: rotate(90deg); }
+
+  /* Player detail modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 24px;
+  }
+  .modal h3 {
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-match {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(37,58,90,0.3);
+    gap: 8px;
+    font-size: 0.9em;
+  }
+  .modal-match .score {
+    font-weight: 700;
+    text-align: center;
+    min-width: 50px;
+  }
+  .modal-match .score.exact { color: var(--green); }
+  .modal-match .score.partial { color: var(--accent); }
+  .modal-match .score.wrong { color: var(--red); }
+  .modal-group-header {
+    font-weight: 700;
+    color: var(--accent);
+    padding: 12px 0 6px;
+    font-size: 0.95em;
+  }
+
   @media (max-width: 500px) {
     header h1 { font-size: 1.6em; }
     .groups-container { grid-template-columns: 1fr; padding: 12px; gap: 14px; }
@@ -406,6 +566,8 @@
     .team { font-size: 0.82em; }
     .score-inputs input { width: 32px; height: 30px; font-size: 0.9em; }
     .share-url { flex-direction: column; }
+    .scoreboard-row { grid-template-columns: 32px 1fr 60px 60px; padding: 10px 12px; }
+    .tab { padding: 10px 16px; font-size: 0.85em; }
   }
 </style>
 </head>
@@ -416,7 +578,7 @@
   <p>Voorspel alle groepswedstrijden en deel met vrienden</p>
 </header>
 
-<div class="toolbar">
+<div class="toolbar" id="editToolbar">
   <input type="text" id="playerName" placeholder="Jouw naam..." maxlength="30">
   <button class="btn" onclick="generateLink()">Link maken &amp; delen</button>
   <button class="btn btn-secondary" onclick="clearAll()">Wissen</button>
@@ -425,21 +587,22 @@
 <div class="tabs">
   <div class="tab active" onclick="switchTab('predict')">Voorspellen</div>
   <div class="tab" onclick="switchTab('scores')">Scorebord</div>
+  <div class="tab" onclick="switchTab('pool')">Pool beheren</div>
 </div>
 
-<div class="info-bar">
+<div class="info-bar" id="infoBarEdit">
   Puntentelling: <strong>3 punten</strong> exacte score &bull; <strong>1 punt</strong> juiste uitslag (winst/gelijk/verlies)
 </div>
 
 <div id="predictView">
   <div class="progress-section">
     <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
-    <div class="progress-text"><span id="progressLabel"><span class="count">0</span> / 36 wedstrijden ingevuld</span><span id="progressPct">0%</span></div>
+    <div class="progress-text"><span id="progressLabel"><span class="count">0</span> / 72 wedstrijden ingevuld</span><span id="progressPct">0%</span></div>
   </div>
   <div class="filters">
-    <button class="filter-btn active" onclick="setFilter('all')">Alle wedstrijden</button>
-    <button class="filter-btn" onclick="setFilter('empty')">Nog in te vullen</button>
-    <button class="filter-btn" onclick="setFilter('filled')">Ingevuld</button>
+    <button class="filter-btn active" onclick="setFilter('all',this)">Alle wedstrijden</button>
+    <button class="filter-btn" onclick="setFilter('empty',this)">Nog in te vullen</button>
+    <button class="filter-btn" onclick="setFilter('filled',this)">Ingevuld</button>
   </div>
   <div class="groups-container" id="groupsContainer"></div>
 </div>
@@ -448,10 +611,53 @@
   <div class="scoreboard" id="scoreboard"></div>
 </div>
 
-<div class="share-section">
+<div id="poolView" class="hidden">
+  <div class="pool-section">
+    <div class="pool-card">
+      <h3>Pool samenstellen</h3>
+      <p>Stap 1: Iedereen vult zijn voorspellingen in op het tabblad "Voorspellen" en maakt een persoonlijke link.<br>
+         Stap 2: Plak alle persoonlijke links hieronder (een per regel).<br>
+         Stap 3: Klik op "Pool link maken" om een gedeeld scorebord te genereren.</p>
+      <textarea class="pool-textarea" id="poolLinksInput" placeholder="Plak hier de persoonlijke links, een per regel...&#10;&#10;Voorbeeld:&#10;https://example.com/wk-pool-2026.html#eyJuIjoiSmFu...&#10;https://example.com/wk-pool-2026.html#eyJuIjoiUGll..."></textarea>
+      <div class="pool-actions">
+        <button class="btn" onclick="parsePoolLinks()">Links toevoegen</button>
+        <button class="btn btn-secondary" onclick="addSelfToPool()">Voeg jezelf toe</button>
+      </div>
+    </div>
+
+    <div class="pool-card" id="poolMembersCard" style="display:none">
+      <h3>Deelnemers (<span id="poolMemberCount">0</span>)</h3>
+      <div class="pool-members" id="poolMembersList"></div>
+      <div class="pool-actions">
+        <button class="btn" onclick="generatePoolLink()">Pool link maken</button>
+        <button class="btn btn-secondary" onclick="clearPool()">Pool wissen</button>
+      </div>
+      <div class="share-url" style="margin-top:16px">
+        <input type="text" id="poolShareUrl" readonly placeholder="Klik op 'Pool link maken'...">
+        <button class="btn" onclick="copyPoolLink()">Kopieer</button>
+      </div>
+    </div>
+
+    <div class="pool-card">
+      <div class="results-toggle" onclick="toggleResults()">
+        <span class="arrow" id="resultsArrow">&#9654;</span>
+        <span>Echte uitslagen invullen (voor puntentelling)</span>
+      </div>
+      <div id="resultsSection" class="hidden">
+        <p>Vul hier de echte wedstrijduitslagen in. Het scorebord berekent dan automatisch de punten per deelnemer.</p>
+        <div class="groups-container" id="resultsContainer" style="padding:12px 0"></div>
+        <div class="pool-actions">
+          <button class="btn" onclick="saveResults()">Uitslagen opslaan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="share-section" id="personalShareSection">
   <div class="share-box">
     <h3>Deel je voorspellingen</h3>
-    <p style="color:var(--text-dim);font-size:0.9em;">Klik op "Link maken" om een unieke link te genereren die je kunt delen met vrienden of collega's.</p>
+    <p style="color:var(--text-dim);font-size:0.9em;">Klik op "Link maken" om een unieke link te genereren die je kunt delen.</p>
     <div class="share-url">
       <input type="text" id="shareUrl" readonly placeholder="Klik op 'Link maken' hierboven...">
       <button class="btn" onclick="copyLink()">Kopieer</button>
@@ -460,21 +666,22 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<div id="modalRoot"></div>
 
 <script>
 const FLAGS = {
-  "Mexico":"🇲🇽","South Africa":"🇿🇦","South Korea":"🇰🇷","Czechia":"🇨🇿",
-  "Canada":"🇨🇦","Bosnia and Herzegovina":"🇧🇦","Qatar":"🇶🇦","Switzerland":"🇨🇭",
-  "Brazil":"🇧🇷","Haiti":"🇭🇹","Morocco":"🇲🇦","Scotland":"🏴󠁧󠁢󠁳󠁣󠁴󠁿",
-  "USA":"🇺🇸","Australia":"🇦🇺","Paraguay":"🇵🇾","Turkiye":"🇹🇷",
-  "Germany":"🇩🇪","Ecuador":"🇪🇨","Curacao":"🇨🇼","Ivory Coast":"🇨🇮",
-  "Japan":"🇯🇵","Netherlands":"🇳🇱","Sweden":"🇸🇪","Tunisia":"🇹🇳",
-  "Belgium":"🇧🇪","Egypt":"🇪🇬","Iran":"🇮🇷","New Zealand":"🇳🇿",
-  "Spain":"🇪🇸","Uruguay":"🇺🇾","Saudi Arabia":"🇸🇦","Cape Verde":"🇨🇻",
-  "France":"🇫🇷","Senegal":"🇸🇳","Norway":"🇳🇴","Iraq":"🇮🇶",
-  "Argentina":"🇦🇷","Algeria":"🇩🇿","Austria":"🇦🇹","Jordan":"🇯🇴",
-  "Portugal":"🇵🇹","Colombia":"🇨🇴","DR Congo":"🇨🇩","Uzbekistan":"🇺🇿",
-  "England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croatia":"🇭🇷","Ghana":"🇬🇭","Panama":"🇵🇦"
+  "Mexico":"\u{1F1F2}\u{1F1FD}","South Africa":"\u{1F1FF}\u{1F1E6}","South Korea":"\u{1F1F0}\u{1F1F7}","Czechia":"\u{1F1E8}\u{1F1FF}",
+  "Canada":"\u{1F1E8}\u{1F1E6}","Bosnia and Herzegovina":"\u{1F1E7}\u{1F1E6}","Qatar":"\u{1F1F6}\u{1F1E6}","Switzerland":"\u{1F1E8}\u{1F1ED}",
+  "Brazil":"\u{1F1E7}\u{1F1F7}","Haiti":"\u{1F1ED}\u{1F1F9}","Morocco":"\u{1F1F2}\u{1F1E6}","Scotland":"\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}",
+  "USA":"\u{1F1FA}\u{1F1F8}","Australia":"\u{1F1E6}\u{1F1FA}","Paraguay":"\u{1F1F5}\u{1F1FE}","Turkiye":"\u{1F1F9}\u{1F1F7}",
+  "Germany":"\u{1F1E9}\u{1F1EA}","Ecuador":"\u{1F1EA}\u{1F1E8}","Curacao":"\u{1F1E8}\u{1F1FC}","Ivory Coast":"\u{1F1E8}\u{1F1EE}",
+  "Japan":"\u{1F1EF}\u{1F1F5}","Netherlands":"\u{1F1F3}\u{1F1F1}","Sweden":"\u{1F1F8}\u{1F1EA}","Tunisia":"\u{1F1F9}\u{1F1F3}",
+  "Belgium":"\u{1F1E7}\u{1F1EA}","Egypt":"\u{1F1EA}\u{1F1EC}","Iran":"\u{1F1EE}\u{1F1F7}","New Zealand":"\u{1F1F3}\u{1F1FF}",
+  "Spain":"\u{1F1EA}\u{1F1F8}","Uruguay":"\u{1F1FA}\u{1F1FE}","Saudi Arabia":"\u{1F1F8}\u{1F1E6}","Cape Verde":"\u{1F1E8}\u{1F1FB}",
+  "France":"\u{1F1EB}\u{1F1F7}","Senegal":"\u{1F1F8}\u{1F1F3}","Norway":"\u{1F1F3}\u{1F1F4}","Iraq":"\u{1F1EE}\u{1F1F6}",
+  "Argentina":"\u{1F1E6}\u{1F1F7}","Algeria":"\u{1F1E9}\u{1F1FF}","Austria":"\u{1F1E6}\u{1F1F9}","Jordan":"\u{1F1EF}\u{1F1F4}",
+  "Portugal":"\u{1F1F5}\u{1F1F9}","Colombia":"\u{1F1E8}\u{1F1F4}","DR Congo":"\u{1F1E8}\u{1F1E9}","Uzbekistan":"\u{1F1FA}\u{1F1FF}",
+  "England":"\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}","Croatia":"\u{1F1ED}\u{1F1F7}","Ghana":"\u{1F1EC}\u{1F1ED}","Panama":"\u{1F1F5}\u{1F1E6}"
 };
 
 const GROUPS = {
@@ -492,6 +699,10 @@ const GROUPS = {
   L: ["England","Croatia","Ghana","Panama"]
 };
 
+const GROUP_LETTERS = Object.keys(GROUPS);
+const MATCHES_PER_GROUP = 6;
+const TOTAL_MATCHES = GROUP_LETTERS.length * MATCHES_PER_GROUP; // 72
+
 function getMatches(teams) {
   const m = [];
   for (let i = 0; i < teams.length; i++)
@@ -502,29 +713,77 @@ function getMatches(teams) {
 
 function flag(team) { return FLAGS[team] || ''; }
 
-let viewMode = false;
+// --- Compact encoding: 1 base-36 char per score, '-' for empty ---
+function scoreToChar(n) { return n.toString(36); }
+function charToScore(c) { return parseInt(c, 36); }
 
-function buildUI() {
-  const container = document.getElementById('groupsContainer');
+function compactEncode(preds) {
+  let s = '';
+  for (const letter of GROUP_LETTERS) {
+    for (let i = 0; i < MATCHES_PER_GROUP; i++) {
+      const key = `${letter}_${i}`;
+      if (preds[key]) {
+        const [h, a] = preds[key].split('-').map(Number);
+        s += scoreToChar(h) + scoreToChar(a);
+      } else {
+        s += '--';
+      }
+    }
+  }
+  return s;
+}
+
+function compactDecode(s) {
+  const preds = {};
+  let idx = 0;
+  for (const letter of GROUP_LETTERS) {
+    for (let i = 0; i < MATCHES_PER_GROUP; i++) {
+      if (idx + 1 >= s.length) break;
+      const h = s[idx], a = s[idx + 1];
+      idx += 2;
+      if (h !== '-' && a !== '-') {
+        preds[`${letter}_${i}`] = `${charToScore(h)}-${charToScore(a)}`;
+      }
+    }
+  }
+  return preds;
+}
+
+function countFilled(preds) {
+  return Object.keys(preds).length;
+}
+
+// --- Pool data structure ---
+let poolPlayers = []; // [{name, preds}]
+let actualResults = {}; // {key: "h-a"}
+
+// --- UI State ---
+let viewMode = false;
+let isPoolView = false;
+let viewingPlayerName = null;
+
+function buildUI(containerId, prefix, readonly) {
+  const container = document.getElementById(containerId);
   container.innerHTML = '';
   for (const [letter, teams] of Object.entries(GROUPS)) {
     const matches = getMatches(teams);
     const groupDiv = document.createElement('div');
     groupDiv.className = 'group';
-    if (viewMode) groupDiv.classList.add('view-mode');
+    if (readonly) groupDiv.classList.add('view-mode');
 
-    let html = `<div class="group-header"><div class="group-letter">${letter}</div>Groep ${letter}<span class="group-count" id="gc_${letter}">0/6</span></div>`;
+    let html = `<div class="group-header"><div class="group-letter">${letter}</div>Groep ${letter}<span class="group-count" id="${prefix}gc_${letter}">0/6</span></div>`;
     matches.forEach((m, i) => {
-      const id = `${letter}_${i}`;
+      const id = `${prefix}${letter}_${i}`;
+      const changeHandler = prefix === 'r_' ? 'onResultChange()' : 'onScoreChange()';
       html += `
-        <div class="match" id="match_${id}">
+        <div class="match" id="${prefix}match_${letter}_${i}">
           <div class="team home"><span>${m[0]}</span><span class="flag">${flag(m[0])}</span></div>
           <div class="score-inputs">
-            <input type="number" min="0" max="20" id="${id}_h" data-group="${letter}" data-match="${i}" data-side="h"
-              onchange="onScoreChange()" oninput="this.value=this.value.slice(0,2)">
+            <input type="number" min="0" max="20" id="${id}_h" data-group="${letter}" data-match="${i}"
+              onchange="${changeHandler}" oninput="this.value=this.value.slice(0,2)" ${readonly ? 'readonly' : ''}>
             <span>-</span>
-            <input type="number" min="0" max="20" id="${id}_a" data-group="${letter}" data-match="${i}" data-side="a"
-              onchange="onScoreChange()" oninput="this.value=this.value.slice(0,2)">
+            <input type="number" min="0" max="20" id="${id}_a" data-group="${letter}" data-match="${i}"
+              onchange="${changeHandler}" oninput="this.value=this.value.slice(0,2)" ${readonly ? 'readonly' : ''}>
             <span class="check">&#10003;</span>
           </div>
           <div class="team away"><span class="flag">${flag(m[1])}</span><span>${m[1]}</span></div>
@@ -535,26 +794,31 @@ function buildUI() {
   }
 }
 
-function getAllPredictions() {
+function getAllPredictions(prefix) {
+  prefix = prefix || '';
   const preds = {};
   for (const [letter, teams] of Object.entries(GROUPS)) {
     const matches = getMatches(teams);
     matches.forEach((m, i) => {
-      const h = document.getElementById(`${letter}_${i}_h`).value;
-      const a = document.getElementById(`${letter}_${i}_a`).value;
-      if (h !== '' && a !== '') {
-        preds[`${letter}_${i}`] = `${h}-${a}`;
+      const hEl = document.getElementById(`${prefix}${letter}_${i}_h`);
+      const aEl = document.getElementById(`${prefix}${letter}_${i}_a`);
+      if (hEl && aEl) {
+        const h = hEl.value, a = aEl.value;
+        if (h !== '' && a !== '') {
+          preds[`${letter}_${i}`] = `${h}-${a}`;
+        }
       }
     });
   }
   return preds;
 }
 
-function setPredictions(preds) {
+function setPredictions(preds, prefix) {
+  prefix = prefix || '';
   for (const [key, val] of Object.entries(preds)) {
     const [h, a] = val.split('-');
-    const hEl = document.getElementById(`${key}_h`);
-    const aEl = document.getElementById(`${key}_a`);
+    const hEl = document.getElementById(`${prefix}${key}_h`);
+    const aEl = document.getElementById(`${prefix}${key}_a`);
     if (hEl && aEl) {
       hEl.value = h;
       aEl.value = a;
@@ -562,19 +826,73 @@ function setPredictions(preds) {
   }
 }
 
+// --- Old base64 encoding (backward compat for personal links) ---
 function encodePredictions(name, preds) {
   const data = { n: name, p: preds };
-  const json = JSON.stringify(data);
-  return btoa(unescape(encodeURIComponent(json)));
+  return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
 }
 
 function decodePredictions(encoded) {
   try {
-    const json = decodeURIComponent(escape(atob(encoded)));
-    return JSON.parse(json);
+    return JSON.parse(decodeURIComponent(escape(atob(encoded))));
   } catch { return null; }
 }
 
+// --- Pool link encoding ---
+// Format: #P~compactResults~enc(name1)~compact1~enc(name2)~compact2~...
+function encodePoolLink() {
+  const resultsCompact = compactEncode(actualResults);
+  let parts = ['P', resultsCompact];
+  for (const p of poolPlayers) {
+    parts.push(encodeURIComponent(p.name));
+    parts.push(compactEncode(p.preds));
+  }
+  return parts.join('~');
+}
+
+function decodePoolLink(hash) {
+  const parts = hash.split('~');
+  if (parts[0] !== 'P' || parts.length < 4) return null;
+  const results = compactDecode(parts[1]);
+  const players = [];
+  for (let i = 2; i < parts.length - 1; i += 2) {
+    players.push({
+      name: decodeURIComponent(parts[i]),
+      preds: compactDecode(parts[i + 1])
+    });
+  }
+  return { results, players };
+}
+
+// --- Score calculation ---
+function calculatePoints(preds, results) {
+  let points = 0, exact = 0, partial = 0;
+  for (const key of Object.keys(results)) {
+    if (!preds[key]) continue;
+    const [h1, a1] = preds[key].split('-').map(Number);
+    const [h2, a2] = results[key].split('-').map(Number);
+    if (h1 === h2 && a1 === a2) {
+      points += 3;
+      exact++;
+    } else {
+      const r1 = Math.sign(h1 - a1);
+      const r2 = Math.sign(h2 - a2);
+      if (r1 === r2) { points += 1; partial++; }
+    }
+  }
+  return { points, exact, partial };
+}
+
+function getMatchResult(preds, results, key) {
+  if (!results[key] || !preds[key]) return 'none';
+  const [h1, a1] = preds[key].split('-').map(Number);
+  const [h2, a2] = results[key].split('-').map(Number);
+  if (h1 === h2 && a1 === a2) return 'exact';
+  if (Math.sign(h1 - a1) === Math.sign(h2 - a2)) return 'partial';
+  return 'wrong';
+}
+
+// --- Link generation ---
 function generateLink() {
   const name = document.getElementById('playerName').value.trim() || 'Anoniem';
   const preds = getAllPredictions();
@@ -587,26 +905,31 @@ function generateLink() {
   const url = window.location.origin + window.location.pathname + '#' + encoded;
   document.getElementById('shareUrl').value = url;
   saveLocal();
-  showToast(`Link gemaakt! (${filled}/36 wedstrijden ingevuld)`);
+  showToast(`Link gemaakt! (${filled}/${TOTAL_MATCHES} wedstrijden)`);
 }
 
 function copyLink() {
   const input = document.getElementById('shareUrl');
-  if (!input.value) {
-    showToast('Maak eerst een link aan!', true);
-    return;
-  }
-  navigator.clipboard.writeText(input.value).then(() => {
+  if (!input.value) { showToast('Maak eerst een link aan!', true); return; }
+  clipCopy(input.value);
+}
+
+function copyPoolLink() {
+  const input = document.getElementById('poolShareUrl');
+  if (!input.value) { showToast('Maak eerst een pool link!', true); return; }
+  clipCopy(input.value);
+}
+
+function clipCopy(text) {
+  navigator.clipboard.writeText(text).then(() => {
     showToast('Link gekopieerd!');
   }).catch(() => {
-    input.select();
-    document.execCommand('copy');
-    showToast('Link gekopieerd!');
+    showToast('Kopieer de link handmatig', true);
   });
 }
 
 function clearAll() {
-  document.querySelectorAll('.score-inputs input').forEach(i => i.value = '');
+  document.querySelectorAll('#groupsContainer .score-inputs input').forEach(i => i.value = '');
   document.getElementById('playerName').value = '';
   document.getElementById('shareUrl').value = '';
   localStorage.removeItem('wkpool2026');
@@ -614,6 +937,7 @@ function clearAll() {
   showToast('Alles gewist');
 }
 
+// --- Local storage ---
 function saveLocal() {
   const name = document.getElementById('playerName').value.trim();
   const preds = getAllPredictions();
@@ -631,107 +955,349 @@ function loadLocal() {
   }
 }
 
+function savePoolLocal() {
+  localStorage.setItem('wkpool2026_pool', JSON.stringify({ players: poolPlayers, results: actualResults }));
+}
+
+function loadPoolLocal() {
+  const saved = localStorage.getItem('wkpool2026_pool');
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      if (data.players) poolPlayers = data.players;
+      if (data.results) actualResults = data.results;
+    } catch {}
+  }
+}
+
+function saveResultsLocal() {
+  localStorage.setItem('wkpool2026_results', JSON.stringify(actualResults));
+}
+
+function loadResultsLocal() {
+  const saved = localStorage.getItem('wkpool2026_results');
+  if (saved) {
+    try { actualResults = JSON.parse(saved); } catch {}
+  }
+}
+
+// --- Hash loading ---
 function loadFromHash() {
   const hash = window.location.hash.slice(1);
   if (!hash) return false;
+
+  // Pool link
+  if (hash.startsWith('P~')) {
+    const data = decodePoolLink(hash);
+    if (!data) return false;
+    poolPlayers = data.players;
+    actualResults = data.results;
+    isPoolView = true;
+    savePoolLocal();
+    saveResultsLocal();
+    switchTab('scores');
+    return true;
+  }
+
+  // Personal link (old base64 format)
   const data = decodePredictions(hash);
   if (!data) return false;
-
   viewMode = true;
-  buildUI();
+  viewingPlayerName = data.n || 'Anoniem';
+  buildUI('groupsContainer', '', true);
   if (data.n) document.getElementById('playerName').value = data.n;
   if (data.p) setPredictions(data.p);
-
-  // Store in scoreboard
-  addToScoreboard(data.n || 'Anoniem', data.p);
   return true;
 }
 
-// Scoreboard: compare multiple players
-function getStoredPlayers() {
-  const stored = localStorage.getItem('wkpool2026_players');
-  return stored ? JSON.parse(stored) : {};
-}
+// --- Pool management ---
+function parsePoolLinks() {
+  const textarea = document.getElementById('poolLinksInput');
+  const lines = textarea.value.trim().split('\n').filter(l => l.trim());
+  let added = 0;
 
-function addToScoreboard(name, preds) {
-  const players = getStoredPlayers();
-  players[name] = preds;
-  localStorage.setItem('wkpool2026_players', JSON.stringify(players));
-}
+  for (const line of lines) {
+    const hashIdx = line.indexOf('#');
+    if (hashIdx === -1) continue;
+    const hash = line.slice(hashIdx + 1);
 
-function calculatePoints(preds1, preds2) {
-  let points = 0;
-  for (const key of Object.keys(preds1)) {
-    if (!preds2[key]) continue;
-    const [h1, a1] = preds1[key].split('-').map(Number);
-    const [h2, a2] = preds2[key].split('-').map(Number);
-    if (h1 === h2 && a1 === a2) {
-      points += 3;
-    } else {
-      const r1 = Math.sign(h1 - a1);
-      const r2 = Math.sign(h2 - a2);
-      if (r1 === r2) points += 1;
+    // Try pool link
+    if (hash.startsWith('P~')) {
+      const data = decodePoolLink(hash);
+      if (data) {
+        for (const p of data.players) {
+          if (!poolPlayers.some(pp => pp.name === p.name)) {
+            poolPlayers.push(p);
+            added++;
+          }
+        }
+        if (Object.keys(data.results).length > 0 && Object.keys(actualResults).length === 0) {
+          actualResults = data.results;
+        }
+        continue;
+      }
+    }
+
+    // Try personal link
+    const data = decodePredictions(hash);
+    if (data && data.p) {
+      const name = data.n || 'Anoniem';
+      const existing = poolPlayers.findIndex(p => p.name === name);
+      if (existing >= 0) {
+        poolPlayers[existing].preds = data.p;
+      } else {
+        poolPlayers.push({ name, preds: data.p });
+        added++;
+      }
     }
   }
-  return points;
+
+  if (added > 0) {
+    savePoolLocal();
+    renderPoolMembers();
+    textarea.value = '';
+    showToast(`${added} deelnemer(s) toegevoegd!`);
+  } else {
+    showToast('Geen geldige links gevonden', true);
+  }
 }
 
+function addSelfToPool() {
+  const name = document.getElementById('playerName').value.trim() || 'Anoniem';
+  const preds = getAllPredictions();
+  if (Object.keys(preds).length === 0) {
+    showToast('Vul eerst je voorspellingen in!', true);
+    return;
+  }
+  const existing = poolPlayers.findIndex(p => p.name === name);
+  if (existing >= 0) {
+    poolPlayers[existing].preds = preds;
+    showToast(`${name} bijgewerkt in de pool`);
+  } else {
+    poolPlayers.push({ name, preds });
+    showToast(`${name} toegevoegd aan de pool!`);
+  }
+  savePoolLocal();
+  renderPoolMembers();
+}
+
+function removeFromPool(idx) {
+  poolPlayers.splice(idx, 1);
+  savePoolLocal();
+  renderPoolMembers();
+}
+
+function clearPool() {
+  poolPlayers = [];
+  savePoolLocal();
+  renderPoolMembers();
+  document.getElementById('poolShareUrl').value = '';
+  showToast('Pool gewist');
+}
+
+function generatePoolLink() {
+  if (poolPlayers.length === 0) {
+    showToast('Voeg eerst deelnemers toe!', true);
+    return;
+  }
+  actualResults = getAllPredictions('r_');
+  saveResultsLocal();
+  const hash = encodePoolLink();
+  const url = window.location.origin + window.location.pathname + '#' + hash;
+  document.getElementById('poolShareUrl').value = url;
+  showToast(`Pool link gemaakt met ${poolPlayers.length} deelnemer(s)!`);
+}
+
+function renderPoolMembers() {
+  const card = document.getElementById('poolMembersCard');
+  const list = document.getElementById('poolMembersList');
+  const count = document.getElementById('poolMemberCount');
+
+  if (poolPlayers.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+
+  card.style.display = '';
+  count.textContent = poolPlayers.length;
+  list.innerHTML = poolPlayers.map((p, i) => {
+    const filled = countFilled(p.preds);
+    return `<div class="pool-member">
+      <div class="member-info">
+        <span class="member-name">${p.name}</span>
+        <span class="member-count">${filled}/${TOTAL_MATCHES} ingevuld</span>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="removeFromPool(${i})">Verwijder</button>
+    </div>`;
+  }).join('');
+}
+
+// --- Results section ---
+function toggleResults() {
+  const section = document.getElementById('resultsSection');
+  const arrow = document.getElementById('resultsArrow');
+  section.classList.toggle('hidden');
+  arrow.classList.toggle('open');
+  if (!section.classList.contains('hidden') && !document.getElementById('r_A_0_h')) {
+    buildUI('resultsContainer', 'r_', false);
+    if (Object.keys(actualResults).length > 0) {
+      setPredictions(actualResults, 'r_');
+    }
+  }
+}
+
+function onResultChange() {
+  actualResults = getAllPredictions('r_');
+  saveResultsLocal();
+}
+
+function saveResults() {
+  actualResults = getAllPredictions('r_');
+  saveResultsLocal();
+  showToast(`${countFilled(actualResults)} uitslagen opgeslagen!`);
+}
+
+// --- Scoreboard ---
 function buildScoreboard() {
   const sb = document.getElementById('scoreboard');
-  const players = getStoredPlayers();
-  const names = Object.keys(players);
+  const hasResults = Object.keys(actualResults).length > 0;
 
-  if (names.length < 2) {
+  if (poolPlayers.length === 0) {
     sb.innerHTML = `<div class="scoreboard-card"><div class="scoreboard-header"><h3>Scorebord</h3></div>
       <div style="padding:24px;text-align:center;color:var(--text-dim);">
-        Deel je link met vrienden! Als zij hun link openen op jouw apparaat (of jij die van hen), verschijnen ze hier in het scorebord.<br><br>
-        <strong style="color:var(--accent);">Minimaal 2 deelnemers nodig</strong>
+        Nog geen deelnemers in de pool.<br><br>
+        Ga naar <strong style="color:var(--accent);">Pool beheren</strong> om deelnemers toe te voegen,<br>
+        of open een pool-link die je hebt ontvangen.
       </div></div>`;
     return;
   }
 
-  // Cross-compare: each player's score = average points against all others
-  const scores = names.map(name => {
-    let total = 0;
-    let count = 0;
-    for (const other of names) {
-      if (other === name) continue;
-      total += calculatePoints(players[name], players[other]);
-      count++;
+  const scores = poolPlayers.map(p => {
+    const filled = countFilled(p.preds);
+    if (hasResults) {
+      const { points, exact, partial } = calculatePoints(p.preds, actualResults);
+      return { name: p.name, points, exact, partial, filled, preds: p.preds };
     }
-    return { name, points: count > 0 ? total : 0, avg: count > 0 ? (total / count).toFixed(1) : 0 };
+    return { name: p.name, points: 0, exact: 0, partial: 0, filled, preds: p.preds };
   });
 
-  scores.sort((a, b) => b.points - a.points);
+  if (hasResults) {
+    scores.sort((a, b) => b.points - a.points || b.exact - a.exact);
+  } else {
+    scores.sort((a, b) => b.filled - a.filled);
+  }
+
+  const resultsCount = countFilled(actualResults);
+  let statusText = hasResults
+    ? `${resultsCount}/${TOTAL_MATCHES} uitslagen ingevuld`
+    : 'Nog geen uitslagen ingevuld';
 
   let html = `<div class="scoreboard-card">
-    <div class="scoreboard-header"><h3>Scorebord</h3><span style="color:var(--text-dim)">${names.length} deelnemers</span></div>`;
+    <div class="scoreboard-header">
+      <h3>Scorebord</h3>
+      <span style="color:var(--text-dim);font-size:0.85em">${poolPlayers.length} deelnemers &bull; ${statusText}</span>
+    </div>`;
+
   scores.forEach((s, i) => {
-    html += `<div class="scoreboard-row">
+    const topClass = i === 0 && hasResults ? ' top1' : '';
+    html += `<div class="scoreboard-row clickable${topClass}" onclick="showPlayerDetail('${s.name.replace(/'/g, "\\'")}')">
       <div class="rank">#${i + 1}</div>
       <div class="name">${s.name}</div>
-      <div class="points">${s.points} pt</div>
+      <div class="filled-count">${s.filled}/${TOTAL_MATCHES}</div>
+      <div class="points">${hasResults ? s.points + ' pt' : '-'}</div>
     </div>`;
   });
+
+  if (!hasResults) {
+    html += `<div style="padding:16px 20px;text-align:center;color:var(--text-dim);font-size:0.85em;">
+      Punten worden berekend zodra uitslagen zijn ingevuld via "Pool beheren"
+    </div>`;
+  }
+
   html += `</div>`;
   sb.innerHTML = html;
 }
 
+// --- Player detail modal ---
+function showPlayerDetail(playerName) {
+  const player = poolPlayers.find(p => p.name === playerName);
+  if (!player) return;
+
+  const hasResults = Object.keys(actualResults).length > 0;
+  const { points, exact, partial } = hasResults
+    ? calculatePoints(player.preds, actualResults)
+    : { points: 0, exact: 0, partial: 0 };
+
+  let html = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <h3>${player.name} ${hasResults ? `<span style="color:var(--green)">${points} punten</span>` : ''}
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </h3>`;
+
+  if (hasResults) {
+    html += `<p style="color:var(--text-dim);font-size:0.85em;margin-bottom:16px;">
+      ${exact} exact (3pt) &bull; ${partial} juiste uitslag (1pt) &bull; ${countFilled(player.preds)} ingevuld
+    </p>`;
+  }
+
+  for (const [letter, teams] of Object.entries(GROUPS)) {
+    const matches = getMatches(teams);
+    html += `<div class="modal-group-header">Groep ${letter}</div>`;
+    matches.forEach((m, i) => {
+      const key = `${letter}_${i}`;
+      const pred = player.preds[key];
+      const result = actualResults[key];
+      let scoreClass = '';
+      if (pred && result) {
+        scoreClass = getMatchResult(player.preds, actualResults, key);
+      }
+
+      const predDisplay = pred || '-';
+      const resultDisplay = result ? ` (${result})` : '';
+
+      html += `<div class="modal-match">
+        <div class="team home" style="font-size:0.85em;justify-content:flex-end">${flag(m[0])} ${m[0]}</div>
+        <div class="score ${scoreClass}">${predDisplay}${resultDisplay}</div>
+        <div class="team away" style="font-size:0.85em">${m[1]} ${flag(m[1])}</div>
+      </div>`;
+    });
+  }
+
+  html += `</div></div>`;
+  document.getElementById('modalRoot').innerHTML = html;
+}
+
+function closeModal() {
+  document.getElementById('modalRoot').innerHTML = '';
+}
+
+// --- Tab switching ---
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('predictView').classList.add('hidden');
+  document.getElementById('scoresView').classList.add('hidden');
+  document.getElementById('poolView').classList.add('hidden');
+
+  const showEditUI = (tab === 'predict' && !isPoolView);
+  document.getElementById('editToolbar').style.display = showEditUI ? '' : 'none';
+  document.getElementById('infoBarEdit').style.display = (tab === 'predict') ? '' : 'none';
+  document.getElementById('personalShareSection').style.display = (tab === 'predict' && !isPoolView) ? '' : 'none';
+
   if (tab === 'predict') {
     document.getElementById('predictView').classList.remove('hidden');
-    document.getElementById('scoresView').classList.add('hidden');
     document.querySelectorAll('.tab')[0].classList.add('active');
-  } else {
-    document.getElementById('predictView').classList.add('hidden');
+  } else if (tab === 'scores') {
     document.getElementById('scoresView').classList.remove('hidden');
     document.querySelectorAll('.tab')[1].classList.add('active');
     buildScoreboard();
+  } else if (tab === 'pool') {
+    document.getElementById('poolView').classList.remove('hidden');
+    document.querySelectorAll('.tab')[2].classList.add('active');
+    renderPoolMembers();
   }
 }
 
-// Progress & visual feedback
+// --- Progress & filtering ---
 let currentFilter = 'all';
 
 function onScoreChange() {
@@ -748,10 +1314,11 @@ function updateProgress() {
     groupCounts[letter] = { total: matches.length, filled: 0 };
     matches.forEach((m, i) => {
       total++;
-      const h = document.getElementById(`${letter}_${i}_h`).value;
-      const a = document.getElementById(`${letter}_${i}_a`).value;
+      const hEl = document.getElementById(`${letter}_${i}_h`);
+      const aEl = document.getElementById(`${letter}_${i}_a`);
       const matchEl = document.getElementById(`match_${letter}_${i}`);
-      if (h !== '' && a !== '') {
+      if (!hEl || !aEl || !matchEl) return;
+      if (hEl.value !== '' && aEl.value !== '') {
         filled++;
         groupCounts[letter].filled++;
         matchEl.classList.add('filled');
@@ -760,10 +1327,13 @@ function updateProgress() {
       }
     });
   }
-  const pct = Math.round((filled / total) * 100);
-  document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('progressLabel').innerHTML = `<span class="count">${filled}</span> / ${total} wedstrijden ingevuld`;
-  document.getElementById('progressPct').textContent = pct + '%';
+  const pct = total > 0 ? Math.round((filled / total) * 100) : 0;
+  const bar = document.getElementById('progressBar');
+  const label = document.getElementById('progressLabel');
+  const pctEl = document.getElementById('progressPct');
+  if (bar) bar.style.width = pct + '%';
+  if (label) label.innerHTML = `<span class="count">${filled}</span> / ${total} wedstrijden ingevuld`;
+  if (pctEl) pctEl.textContent = pct + '%';
 
   for (const [letter, c] of Object.entries(groupCounts)) {
     const el = document.getElementById(`gc_${letter}`);
@@ -774,21 +1344,22 @@ function updateProgress() {
   }
 }
 
-function setFilter(filter) {
+function setFilter(filter, btn) {
   currentFilter = filter;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
   applyFilter();
 }
 
 function applyFilter() {
-  const groupCards = document.querySelectorAll('.group');
+  const groupCards = document.querySelectorAll('#groupsContainer .group');
   const groupKeys = Object.keys(GROUPS);
   for (const [letter, teams] of Object.entries(GROUPS)) {
     const matches = getMatches(teams);
     let groupVisible = false;
     matches.forEach((m, i) => {
       const matchEl = document.getElementById(`match_${letter}_${i}`);
+      if (!matchEl) return;
       const isFilled = matchEl.classList.contains('filled');
       let show = true;
       if (currentFilter === 'filled') show = isFilled;
@@ -811,21 +1382,23 @@ function showToast(msg, isError) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// Init
-buildUI();
+// --- Keyboard: Escape closes modal ---
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// --- Init ---
+buildUI('groupsContainer', '', false);
+loadPoolLocal();
+loadResultsLocal();
+
 const fromHash = loadFromHash();
 if (!fromHash) {
   loadLocal();
-  // Also save own predictions to scoreboard on load
-  const name = document.getElementById('playerName').value.trim();
-  const preds = getAllPredictions();
-  if (name && Object.keys(preds).length > 0) {
-    addToScoreboard(name, preds);
-  }
+  updateProgress();
+} else if (!isPoolView) {
+  updateProgress();
 }
-
-// Update progress on init
-updateProgress();
 </script>
 </body>
 </html>
