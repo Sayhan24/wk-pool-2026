@@ -397,6 +397,30 @@
   }
   .group-count.complete { color: var(--green); }
 
+  /* Locked state */
+  .locked-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #1a3a20, #162850);
+    border-bottom: 1px solid var(--green);
+    color: var(--green);
+    font-weight: 600;
+    font-size: 0.95em;
+  }
+  .locked-banner .btn {
+    font-size: 0.8em;
+    padding: 6px 14px;
+  }
+  .locked .score-inputs input {
+    pointer-events: none;
+    opacity: 0.7;
+    background: transparent;
+    border-color: rgba(37,58,90,0.3);
+  }
+
   /* Pool tab */
   .pool-section {
     max-width: 800px;
@@ -562,9 +586,13 @@
 
 <div class="toolbar" id="editToolbar">
   <input type="text" id="playerName" placeholder="Jouw naam..." maxlength="30">
-  <button class="btn" onclick="generateLink()">Link kopieren</button>
+  <button class="btn" id="btnGenerate" onclick="generateLink()">Link kopieren</button>
   <button class="btn btn-secondary" onclick="clearAll()">Wissen</button>
   <input type="text" id="shareUrl" class="share-url-inline" readonly placeholder="Nog geen link gemaakt..." onclick="this.select()">
+</div>
+<div class="locked-banner hidden" id="lockedBanner">
+  Voorspellingen vergrendeld &mdash; link is gedeeld
+  <button class="btn" onclick="unlockPredictions()">Ontgrendelen &amp; nieuwe link maken</button>
 </div>
 
 <div class="tabs">
@@ -734,6 +762,7 @@ let actualResults = {}; // {key: "h-a"}
 let viewMode = false;
 let isPoolView = false;
 let viewingPlayerName = null;
+let isLocked = false;
 
 function buildUI(containerId, prefix, readonly) {
   const container = document.getElementById(containerId);
@@ -880,11 +909,33 @@ function generateLink() {
   input.value = url;
   input.classList.add('has-link');
   saveLocal();
+  lockPredictions();
   navigator.clipboard.writeText(url).then(() => {
-    showToast(`Link gekopieerd! (${filled}/${TOTAL_MATCHES} wedstrijden)`);
+    showToast(`Link gekopieerd en vergrendeld! (${filled}/${TOTAL_MATCHES})`);
   }).catch(() => {
-    showToast(`Link gemaakt! (${filled}/${TOTAL_MATCHES} wedstrijden)`);
+    showToast(`Link gemaakt en vergrendeld! (${filled}/${TOTAL_MATCHES})`);
   });
+}
+
+function lockPredictions() {
+  isLocked = true;
+  document.getElementById('groupsContainer').classList.add('locked');
+  document.getElementById('playerName').readOnly = true;
+  document.getElementById('btnGenerate').style.display = 'none';
+  document.getElementById('lockedBanner').classList.remove('hidden');
+  localStorage.setItem('wkpool2026_locked', '1');
+}
+
+function unlockPredictions() {
+  isLocked = false;
+  document.getElementById('groupsContainer').classList.remove('locked');
+  document.getElementById('playerName').readOnly = false;
+  document.getElementById('btnGenerate').style.display = '';
+  document.getElementById('lockedBanner').classList.add('hidden');
+  document.getElementById('shareUrl').value = '';
+  document.getElementById('shareUrl').classList.remove('has-link');
+  localStorage.removeItem('wkpool2026_locked');
+  showToast('Ontgrendeld! Pas je voorspellingen aan en maak een nieuwe link.');
 }
 
 function copyPoolLink() {
@@ -902,10 +953,13 @@ function clipCopy(text) {
 }
 
 function clearAll() {
+  if (isLocked) unlockPredictions();
   document.querySelectorAll('#groupsContainer .score-inputs input').forEach(i => i.value = '');
   document.getElementById('playerName').value = '';
   document.getElementById('shareUrl').value = '';
+  document.getElementById('shareUrl').classList.remove('has-link');
   localStorage.removeItem('wkpool2026');
+  localStorage.removeItem('wkpool2026_locked');
   updateProgress();
   showToast('Alles gewist');
 }
@@ -1253,6 +1307,7 @@ function switchTab(tab) {
 
   const showEditUI = (tab === 'predict' && !isPoolView);
   document.getElementById('editToolbar').style.display = showEditUI ? '' : 'none';
+  document.getElementById('lockedBanner').style.display = (tab === 'predict' && isLocked && !isPoolView) ? '' : 'none';
   document.getElementById('infoBarEdit').style.display = (tab === 'predict') ? '' : 'none';
 
   if (tab === 'predict') {
@@ -1368,6 +1423,9 @@ const fromHash = loadFromHash();
 if (!fromHash) {
   loadLocal();
   updateProgress();
+  if (localStorage.getItem('wkpool2026_locked') === '1') {
+    lockPredictions();
+  }
 } else if (!isPoolView) {
   updateProgress();
 }
