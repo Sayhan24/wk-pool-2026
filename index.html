@@ -206,38 +206,20 @@
     font-weight: 700;
     font-size: 0.9em;
   }
-  .share-section {
-    max-width: 700px;
-    margin: 20px auto;
-    padding: 0 20px 30px;
-    text-align: center;
-  }
-  .share-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-  }
-  .share-box h3 {
-    margin-bottom: 12px;
-    color: var(--accent);
-  }
-  .share-url {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-  }
-  .share-url input {
-    flex: 1;
+  .share-url-inline {
+    flex: 1 1 100%;
     background: var(--input-bg);
     border: 1px solid var(--border);
-    color: var(--text);
+    color: var(--text-dim);
     padding: 10px 14px;
     border-radius: 8px;
-    font-size: 0.85em;
+    font-size: 0.8em;
     font-family: monospace;
+    cursor: pointer;
+    min-width: 0;
   }
-  .share-url input:focus { outline: none; border-color: var(--accent); }
+  .share-url-inline:focus { outline: none; border-color: var(--accent); }
+  .share-url-inline.has-link { color: var(--text); border-color: var(--accent); }
   .toast {
     position: fixed;
     bottom: 30px;
@@ -580,8 +562,9 @@
 
 <div class="toolbar" id="editToolbar">
   <input type="text" id="playerName" placeholder="Jouw naam..." maxlength="30">
-  <button class="btn" onclick="generateLink()">Link maken &amp; delen</button>
+  <button class="btn" onclick="generateLink()">Link kopieren</button>
   <button class="btn btn-secondary" onclick="clearAll()">Wissen</button>
+  <input type="text" id="shareUrl" class="share-url-inline" readonly placeholder="Nog geen link gemaakt..." onclick="this.select()">
 </div>
 
 <div class="tabs">
@@ -654,16 +637,6 @@
   </div>
 </div>
 
-<div class="share-section" id="personalShareSection">
-  <div class="share-box">
-    <h3>Deel je voorspellingen</h3>
-    <p style="color:var(--text-dim);font-size:0.9em;">Klik op "Link maken" om een unieke link te genereren die je kunt delen.</p>
-    <div class="share-url">
-      <input type="text" id="shareUrl" readonly placeholder="Klik op 'Link maken' hierboven...">
-      <button class="btn" onclick="copyLink()">Kopieer</button>
-    </div>
-  </div>
-</div>
 
 <div class="toast" id="toast"></div>
 <div id="modalRoot"></div>
@@ -903,15 +876,15 @@ function generateLink() {
   }
   const encoded = encodePredictions(name, preds);
   const url = window.location.origin + window.location.pathname + '#' + encoded;
-  document.getElementById('shareUrl').value = url;
-  saveLocal();
-  showToast(`Link gemaakt! (${filled}/${TOTAL_MATCHES} wedstrijden)`);
-}
-
-function copyLink() {
   const input = document.getElementById('shareUrl');
-  if (!input.value) { showToast('Maak eerst een link aan!', true); return; }
-  clipCopy(input.value);
+  input.value = url;
+  input.classList.add('has-link');
+  saveLocal();
+  navigator.clipboard.writeText(url).then(() => {
+    showToast(`Link gekopieerd! (${filled}/${TOTAL_MATCHES} wedstrijden)`);
+  }).catch(() => {
+    showToast(`Link gemaakt! (${filled}/${TOTAL_MATCHES} wedstrijden)`);
+  });
 }
 
 function copyPoolLink() {
@@ -1281,7 +1254,6 @@ function switchTab(tab) {
   const showEditUI = (tab === 'predict' && !isPoolView);
   document.getElementById('editToolbar').style.display = showEditUI ? '' : 'none';
   document.getElementById('infoBarEdit').style.display = (tab === 'predict') ? '' : 'none';
-  document.getElementById('personalShareSection').style.display = (tab === 'predict' && !isPoolView) ? '' : 'none';
 
   if (tab === 'predict') {
     document.getElementById('predictView').classList.remove('hidden');
