@@ -805,7 +805,8 @@ async function fetchResults() {
   statusEl.innerHTML = '<span class="status-dot saving"></span> Uitslagen ophalen...';
 
   try {
-    const resp = await fetch('https://api.football-data.org/v4/competitions/WC/matches?status=FINISHED', {
+    const apiUrl = 'https://api.football-data.org/v4/competitions/WC/matches?status=FINISHED';
+    const resp = await fetch('https://corsproxy.io/?' + encodeURIComponent(apiUrl), {
       headers: { 'X-Auth-Token': apiKey }
     });
 
@@ -833,7 +834,8 @@ async function fetchResultsAlt(apiKey) {
   const statusEl = document.getElementById('fetchStatus');
   try {
     // Try fetching all competitions to find World Cup 2026
-    const resp = await fetch('https://api.football-data.org/v4/competitions/2000/matches?status=FINISHED', {
+    const apiUrl2 = 'https://api.football-data.org/v4/competitions/2000/matches?status=FINISHED';
+    const resp = await fetch('https://corsproxy.io/?' + encodeURIComponent(apiUrl2), {
       headers: { 'X-Auth-Token': apiKey }
     });
     if (!resp.ok) {
