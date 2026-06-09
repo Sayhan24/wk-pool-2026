@@ -370,12 +370,22 @@
       </div>
 
       <div class="admin-card">
+        <h3>Uitslagen automatisch ophalen</h3>
+        <p>Haal de echte uitslagen op via de Football-Data API. Gratis API key nodig van <a href="https://www.football-data.org/client/register" target="_blank" style="color:var(--accent)">football-data.org</a>.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <input type="text" id="apiKeyInput" placeholder="API key..." style="flex:1;min-width:200px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:monospace;font-size:0.85em">
+          <button class="btn" onclick="fetchResults()">Uitslagen ophalen</button>
+        </div>
+        <div id="fetchStatus" style="margin-top:10px;font-size:0.85em;color:var(--text-dim)"></div>
+      </div>
+
+      <div class="admin-card">
         <div class="section-toggle" onclick="toggleSection('results')">
           <span class="arrow" id="resultsArrow">&#9654;</span>
-          <span>Echte uitslagen invullen</span>
+          <span>Uitslagen handmatig invullen / aanpassen</span>
         </div>
         <div id="resultsSection" class="hidden">
-          <p>Vul de echte uitslagen in. Het scorebord updatet automatisch voor iedereen.</p>
+          <p>Handmatig uitslagen invullen of aanpassen. Automatisch opgehaalde uitslagen staan hier ook.</p>
           <div class="groups-container" id="resultsContainer" style="padding:12px 0"></div>
           <div id="koResultsContainer"></div>
           <div style="margin-top:12px">
@@ -743,6 +753,152 @@ function getMatchResult(preds, results, key) {
   return 'wrong';
 }
 
+// --- Auto-fetch results from football-data.org ---
+const TEAM_NAME_MAP = {
+  'Korea Republic': 'South Korea', 'Republic of Korea': 'South Korea',
+  'Türkiye': 'Turkiye', 'Turkey': 'Turkiye',
+  "Côte d'Ivoire": 'Ivory Coast', 'Cote d Ivoire': 'Ivory Coast',
+  'Bosnia-Herzegovina': 'Bosnia and Herzegovina', 'Bosnia & Herzegovina': 'Bosnia and Herzegovina',
+  'United States': 'USA', 'United States of America': 'USA',
+  'Cabo Verde': 'Cape Verde', 'Cape Verde Islands': 'Cape Verde',
+  'Congo DR': 'DR Congo', 'Democratic Republic of Congo': 'DR Congo', 'Congo': 'DR Congo',
+  'Curaçao': 'Curacao',
+  'IR Iran': 'Iran', 'Iran, Islamic Republic of': 'Iran',
+  'Saudi-Arabien': 'Saudi Arabia',
+  'New Zealand': 'New Zealand', 'Aotearoa New Zealand': 'New Zealand',
+  'Czechia': 'Czechia', 'Czech Republic': 'Czechia',
+};
+
+function mapTeamName(apiName) {
+  if (TEAM_NAME_MAP[apiName]) return TEAM_NAME_MAP[apiName];
+  if (ALL_TEAMS.includes(apiName)) return apiName;
+  // Fuzzy match
+  const lower = apiName.toLowerCase();
+  for (const t of ALL_TEAMS) {
+    if (t.toLowerCase() === lower) return t;
+    if (lower.includes(t.toLowerCase()) || t.toLowerCase().includes(lower)) return t;
+  }
+  return apiName;
+}
+
+function findMatchKey(homeTeam, awayTeam) {
+  const home = mapTeamName(homeTeam);
+  const away = mapTeamName(awayTeam);
+  for (const [letter, teams] of Object.entries(GROUPS)) {
+    const matches = getMatches(teams);
+    for (let i = 0; i < matches.length; i++) {
+      const [mh, ma] = matches[i];
+      if ((mh === home && ma === away) || (mh === away && ma === home)) {
+        // If order is reversed, swap the score
+        return { key: `${letter}_${i}`, reversed: mh === away };
+      }
+    }
+  }
+  return null;
+}
+
+async function fetchResults() {
+  const apiKey = document.getElementById('apiKeyInput').value.trim();
+  if (!apiKey) {
+    showToast('Vul eerst je API key in', true);
+    return;
+  }
+  localStorage.setItem('wkpool_apikey', apiKey);
+
+  const statusEl = document.getElementById('fetchStatus');
+  statusEl.innerHTML = '<span class="status-dot saving"></span> Uitslagen ophalen...';
+
+  try {
+    const resp = await fetch('https://api.football-data.org/v4/competitions/WC/matches?status=FINISHED', {
+      headers: { 'X-Auth-Token': apiKey }
+    });
+
+    if (!resp.ok) {
+      if (resp.status === 403) {
+        statusEl.innerHTML = '<span style="color:var(--red)">Ongeldige API key. Registreer gratis op football-data.org</span>';
+      } else if (resp.status === 404) {
+        // Try alternative competition ID
+        statusEl.innerHTML = '<span class="status-dot saving"></span> Alternatieve endpoint proberen...';
+        return fetchResultsAlt(apiKey);
+      } else {
+        statusEl.innerHTML = `<span style="color:var(--red)">API fout: ${resp.status}</span>`;
+      }
+      return;
+    }
+
+    const data = await resp.json();
+    processApiResults(data.matches || [], statusEl);
+  } catch (err) {
+    statusEl.innerHTML = `<span style="color:var(--red)">Verbindingsfout: ${err.message}</span>`;
+  }
+}
+
+async function fetchResultsAlt(apiKey) {
+  const statusEl = document.getElementById('fetchStatus');
+  try {
+    // Try fetching all competitions to find World Cup 2026
+    const resp = await fetch('https://api.football-data.org/v4/competitions/2000/matches?status=FINISHED', {
+      headers: { 'X-Auth-Token': apiKey }
+    });
+    if (!resp.ok) {
+      statusEl.innerHTML = `<span style="color:var(--red)">WK 2026 data nog niet beschikbaar in API (status ${resp.status}). Probeer later opnieuw of vul handmatig in.</span>`;
+      return;
+    }
+    const data = await resp.json();
+    processApiResults(data.matches || [], statusEl);
+  } catch (err) {
+    statusEl.innerHTML = `<span style="color:var(--red)">Fout: ${err.message}</span>`;
+  }
+}
+
+function processApiResults(matches, statusEl) {
+  if (matches.length === 0) {
+    statusEl.innerHTML = '<span style="color:var(--accent)">Nog geen afgelopen wedstrijden gevonden. Het WK begint op 11 juni 2026.</span>';
+    return;
+  }
+
+  const results = { ...(poolData.results || {}) };
+  let updated = 0, notFound = 0;
+  const notFoundTeams = [];
+
+  for (const match of matches) {
+    const homeTeam = match.homeTeam?.name || match.homeTeam?.shortName;
+    const awayTeam = match.awayTeam?.name || match.awayTeam?.shortName;
+    const homeScore = match.score?.fullTime?.home;
+    const awayScore = match.score?.fullTime?.away;
+
+    if (homeTeam == null || awayTeam == null || homeScore == null || awayScore == null) continue;
+
+    const found = findMatchKey(homeTeam, awayTeam);
+    if (found) {
+      if (found.reversed) {
+        results[found.key] = `${awayScore}-${homeScore}`;
+      } else {
+        results[found.key] = `${homeScore}-${awayScore}`;
+      }
+      updated++;
+    } else {
+      notFound++;
+      notFoundTeams.push(`${homeTeam} vs ${awayTeam}`);
+    }
+  }
+
+  if (updated > 0) {
+    db.ref(`pools/${currentPoolId}/results`).set(results)
+      .then(() => {
+        let msg = `<span style="color:var(--green)">${updated} uitslagen bijgewerkt!</span>`;
+        if (notFound > 0) msg += `<br><span style="color:var(--accent)">${notFound} wedstrijden niet herkend: ${notFoundTeams.join(', ')}</span>`;
+        statusEl.innerHTML = msg;
+        showToast(`${updated} uitslagen opgehaald en opgeslagen!`);
+      })
+      .catch(err => { statusEl.innerHTML = `<span style="color:var(--red)">Opslaan mislukt: ${err.message}</span>`; });
+  } else {
+    let msg = '<span style="color:var(--accent)">Geen nieuwe uitslagen gevonden.</span>';
+    if (notFound > 0) msg += `<br><span style="color:var(--text-dim)">${notFoundTeams.join(', ')}</span>`;
+    statusEl.innerHTML = msg;
+  }
+}
+
 // --- Scoreboard ---
 function buildScoreboard() {
   const sb = document.getElementById('scoreboard');
@@ -942,6 +1098,7 @@ function switchTab(tab) {
   } else if (tab === 'admin') {
     document.getElementById('adminView').classList.remove('hidden');
     document.querySelectorAll('.tab')[2].classList.add('active');
+    initAdminView();
   }
 }
 
@@ -953,6 +1110,11 @@ function toggleSection(name) {
   arrow.classList.toggle('open');
   if (name === 'knockout' && !section.classList.contains('hidden')) buildKOAdminUI();
   if (name === 'results' && !section.classList.contains('hidden')) buildResultsUI();
+}
+
+function initAdminView() {
+  const savedKey = localStorage.getItem('wkpool_apikey');
+  if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
 }
 
 // --- Progress ---
