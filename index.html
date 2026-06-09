@@ -23,22 +23,15 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
+    background: var(--bg); color: var(--text); min-height: 100vh;
   }
   header {
     background: linear-gradient(135deg, #0d1f3c 0%, #162850 50%, #1a3060 100%);
-    text-align: center;
-    padding: 30px 20px 20px;
-    border-bottom: 3px solid var(--accent);
-    position: relative;
-    overflow: hidden;
+    text-align: center; padding: 30px 20px 20px; border-bottom: 3px solid var(--accent);
+    position: relative; overflow: hidden;
   }
   header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8a84e' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     opacity: 0.5;
   }
@@ -46,8 +39,51 @@
   header h1 span { color: var(--accent); }
   header p { color: var(--text-dim); margin-top: 8px; font-size: 1em; position: relative; }
 
+  /* Join/Create bar */
+  .join-bar {
+    display: flex; justify-content: center; gap: 12px; padding: 20px;
+    flex-wrap: wrap; background: var(--card); border-bottom: 1px solid var(--border);
+  }
+  .join-bar input {
+    background: var(--input-bg); border: 1px solid var(--border); color: var(--text);
+    padding: 12px 18px; border-radius: 8px; font-size: 1.05em; width: 240px; text-align: center;
+    text-transform: uppercase; letter-spacing: 2px; font-weight: 700;
+  }
+  .join-bar input::placeholder { text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .join-bar input:focus { outline: none; border-color: var(--accent); }
+
+  .btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #0a1628;
+    border: none; padding: 12px 28px; border-radius: 8px; font-size: 0.95em;
+    font-weight: 700; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(200,168,78,0.3); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-secondary { background: var(--card-hover); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: #253a5a; }
+  .btn-danger { background: var(--red); color: #fff; border: none; }
+  .btn-sm { padding: 6px 14px; font-size: 0.85em; }
+
+  /* Pool info bar */
+  .pool-bar {
+    display: flex; justify-content: center; align-items: center; gap: 16px; padding: 14px 20px;
+    background: linear-gradient(135deg, #1a3a20, #162850); border-bottom: 1px solid var(--green);
+    color: var(--green); font-weight: 600; flex-wrap: wrap;
+  }
+  .pool-bar .pool-code {
+    background: rgba(46,204,113,0.15); padding: 4px 14px; border-radius: 6px;
+    font-family: monospace; font-size: 1.1em; letter-spacing: 2px;
+  }
+
+  .info-bar {
+    text-align: center; padding: 12px; color: var(--text-dim); font-size: 0.85em;
+    background: var(--card); border-bottom: 1px solid var(--border);
+  }
+  .info-bar strong { color: var(--accent); }
+
+  /* Toolbar inside pool */
   .toolbar {
-    display: flex; justify-content: center; gap: 12px; padding: 16px 20px;
+    display: flex; justify-content: center; gap: 12px; padding: 12px 20px;
     flex-wrap: wrap; background: var(--card); border-bottom: 1px solid var(--border);
   }
   .toolbar input[type="text"] {
@@ -56,23 +92,7 @@
   }
   .toolbar input[type="text"]:focus { outline: none; border-color: var(--accent); }
 
-  .btn {
-    background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #0a1628;
-    border: none; padding: 10px 24px; border-radius: 8px; font-size: 0.95em;
-    font-weight: 700; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(200,168,78,0.3); }
-  .btn-secondary { background: var(--card-hover); color: var(--text); border: 1px solid var(--border); }
-  .btn-secondary:hover { background: #253a5a; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-  .btn-danger { background: var(--red); color: #fff; border: none; padding: 6px 12px; font-size: 0.8em; }
-  .btn-sm { padding: 6px 14px; font-size: 0.85em; }
-
-  .info-bar {
-    text-align: center; padding: 12px; color: var(--text-dim); font-size: 0.85em;
-    background: var(--card); border-bottom: 1px solid var(--border);
-  }
-  .info-bar strong { color: var(--accent); }
-
+  /* Groups */
   .groups-container {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto;
@@ -113,20 +133,30 @@
   .score-inputs input:focus { outline: none; border-color: var(--accent); background: #162850; }
   .score-inputs span { color: var(--text-dim); font-weight: 700; font-size: 0.9em; }
 
-  .share-url-inline {
-    flex: 1 1 100%; background: var(--input-bg); border: 1px solid var(--border);
-    color: var(--text-dim); padding: 10px 14px; border-radius: 8px; font-size: 0.8em;
-    font-family: monospace; cursor: pointer; min-width: 0;
-  }
-  .share-url-inline:focus { outline: none; border-color: var(--accent); }
-  .share-url-inline.has-link { color: var(--text); border-color: var(--accent); }
+  .match.filled { border-left: 3px solid var(--green); }
+  .match .check { font-size: 0.8em; margin-left: 2px; opacity: 0; transition: opacity 0.3s; }
+  .match.filled .check { opacity: 1; }
+  .group-count { margin-left: auto; font-size: 0.8em; color: var(--text-dim); font-weight: 600; }
+  .group-count.complete { color: var(--green); }
 
-  .toast {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-    background: var(--green); color: #fff; padding: 12px 28px; border-radius: 8px;
-    font-weight: 700; transition: transform 0.3s; z-index: 999;
+  /* Progress */
+  .progress-section { max-width: 1400px; margin: 0 auto; padding: 16px 20px 0; }
+  .progress-bar-outer { background: var(--input-bg); border-radius: 10px; height: 18px; overflow: hidden; border: 1px solid var(--border); }
+  .progress-bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 10px; transition: width 0.4s ease; }
+  .progress-text { display: flex; justify-content: space-between; font-size: 0.82em; color: var(--text-dim); margin-top: 6px; }
+  .progress-text .count { color: var(--accent); font-weight: 700; }
+
+  /* Tabs */
+  .tabs { display: flex; justify-content: center; gap: 0; padding: 0 20px; margin-top: -1px; }
+  .tab {
+    padding: 12px 28px; background: var(--card); border: 1px solid var(--border); border-top: none;
+    color: var(--text-dim); cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.2s;
   }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+  .tab:first-child { border-radius: 0 0 0 10px; }
+  .tab:last-child { border-radius: 0 0 10px 0; }
+  .tab.active { background: var(--group-header); color: var(--accent); border-bottom-color: var(--group-header); }
+  .tab:hover:not(.active) { color: var(--text); }
+  .hidden { display: none !important; }
 
   /* Scoreboard */
   .scoreboard { max-width: 700px; margin: 0 auto; padding: 20px; }
@@ -149,85 +179,18 @@
   .scoreboard-row .filled-count { text-align: right; font-size: 0.85em; color: var(--text-dim); }
   .scoreboard-row .points { text-align: right; font-weight: 700; font-size: 1.1em; color: var(--green); }
   .scoreboard-row.top1 { background: rgba(200,168,78,0.1); }
-  .scoreboard-row.top1 .rank { font-size: 1.3em; }
   .scoreboard-row.clickable { cursor: pointer; }
   .scoreboard-row.clickable:hover { background: var(--card-hover); }
 
-  .view-mode .score-inputs input { background: transparent; border-color: transparent; pointer-events: none; }
-
-  /* Tabs */
-  .tabs { display: flex; justify-content: center; gap: 0; padding: 0 20px; margin-top: -1px; }
-  .tab {
-    padding: 12px 28px; background: var(--card); border: 1px solid var(--border); border-top: none;
-    color: var(--text-dim); cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.2s;
-  }
-  .tab:first-child { border-radius: 0 0 0 10px; }
-  .tab:last-child { border-radius: 0 0 10px 0; }
-  .tab.active { background: var(--group-header); color: var(--accent); border-bottom-color: var(--group-header); }
-  .tab:hover:not(.active) { color: var(--text); }
-  .hidden { display: none !important; }
-
-  /* Progress */
-  .progress-section { max-width: 1400px; margin: 0 auto; padding: 16px 20px 0; }
-  .progress-bar-outer { background: var(--input-bg); border-radius: 10px; height: 18px; overflow: hidden; border: 1px solid var(--border); }
-  .progress-bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 10px; transition: width 0.4s ease; }
-  .progress-text { display: flex; justify-content: space-between; font-size: 0.82em; color: var(--text-dim); margin-top: 6px; }
-  .progress-text .count { color: var(--accent); font-weight: 700; }
-
-  /* Filters */
-  .filters { display: flex; justify-content: center; gap: 8px; padding: 12px 20px 0; flex-wrap: wrap; }
-  .filter-btn {
-    background: var(--card); color: var(--text-dim); border: 1px solid var(--border);
-    padding: 6px 16px; border-radius: 20px; font-size: 0.85em; cursor: pointer;
-    transition: all 0.2s; font-weight: 600;
-  }
-  .filter-btn:hover { color: var(--text); border-color: var(--accent); }
-  .filter-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-
-  .match.filled { border-left: 3px solid var(--green); }
-  .match .check { font-size: 0.8em; margin-left: 2px; opacity: 0; transition: opacity 0.3s; }
-  .match.filled .check { opacity: 1; }
-
-  .group-count { margin-left: auto; font-size: 0.8em; color: var(--text-dim); font-weight: 600; }
-  .group-count.complete { color: var(--green); }
-
-  /* Locked */
-  .locked-banner {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    padding: 14px 20px; background: linear-gradient(135deg, #1a3a20, #162850);
-    border-bottom: 1px solid var(--green); color: var(--green); font-weight: 600; font-size: 0.95em;
-  }
-  .locked-banner .btn { font-size: 0.8em; padding: 6px 14px; }
-  .locked .score-inputs input { pointer-events: none; opacity: 0.7; background: transparent; border-color: rgba(37,58,90,0.3); }
-
-  /* Pool tab */
-  .pool-section { max-width: 800px; margin: 0 auto; padding: 20px; }
-  .pool-card {
+  /* Admin section */
+  .admin-section { max-width: 800px; margin: 0 auto; padding: 20px; }
+  .admin-card {
     background: var(--card); border: 1px solid var(--border); border-radius: 12px;
     padding: 24px; margin-bottom: 20px;
   }
-  .pool-card h3 { color: var(--accent); margin-bottom: 16px; }
-  .pool-card p { color: var(--text-dim); font-size: 0.9em; margin-bottom: 12px; line-height: 1.5; }
-  .pool-textarea {
-    width: 100%; min-height: 120px; background: var(--input-bg); border: 1px solid var(--border);
-    color: var(--text); padding: 12px; border-radius: 8px; font-family: monospace;
-    font-size: 0.85em; resize: vertical; margin-bottom: 12px;
-  }
-  .pool-textarea:focus { outline: none; border-color: var(--accent); }
-  .pool-textarea::placeholder { color: var(--text-dim); }
-  .pool-members { margin-top: 16px; }
-  .pool-member {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 14px; background: var(--input-bg); border: 1px solid var(--border);
-    border-radius: 8px; margin-bottom: 8px;
-  }
-  .pool-member .member-info { display: flex; align-items: center; gap: 10px; }
-  .pool-member .member-name { font-weight: 600; }
-  .pool-member .member-count { color: var(--text-dim); font-size: 0.85em; }
-  .pool-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
-  .share-url { display: flex; gap: 8px; }
+  .admin-card h3 { color: var(--accent); margin-bottom: 16px; }
+  .admin-card p { color: var(--text-dim); font-size: 0.9em; margin-bottom: 12px; line-height: 1.5; }
 
-  /* Toggleable sections */
   .section-toggle {
     display: flex; align-items: center; gap: 10px; cursor: pointer;
     padding: 12px 0; color: var(--accent); font-weight: 600;
@@ -235,7 +198,6 @@
   .section-toggle .arrow { transition: transform 0.2s; font-size: 0.8em; }
   .section-toggle .arrow.open { transform: rotate(90deg); }
 
-  /* Knockout management */
   .ko-round-config {
     background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px;
     margin-bottom: 12px; overflow: hidden;
@@ -261,17 +223,12 @@
   .ko-match-config select:focus { outline: none; border-color: var(--ko-accent); }
   .ko-match-config .vs { color: var(--text-dim); font-weight: 700; font-size: 0.85em; text-align: center; }
 
-  /* Section divider */
-  .section-divider {
-    max-width: 1400px; margin: 8px auto 0; padding: 0 20px;
-  }
+  .section-divider { max-width: 1400px; margin: 8px auto 0; padding: 0 20px; }
   .section-divider-inner {
     display: flex; align-items: center; gap: 12px; padding: 14px 0;
-    color: var(--ko-accent); font-weight: 700; font-size: 1em;
+    color: var(--ko-accent); font-weight: 700;
   }
-  .section-divider-inner::after {
-    content: ''; flex: 1; height: 2px; background: var(--ko-accent); opacity: 0.3;
-  }
+  .section-divider-inner::after { content: ''; flex: 1; height: 2px; background: var(--ko-accent); opacity: 0.3; }
 
   /* Modal */
   .modal-overlay {
@@ -282,14 +239,8 @@
     background: var(--card); border: 1px solid var(--accent); border-radius: 16px;
     max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 24px;
   }
-  .modal h3 {
-    color: var(--accent); margin-bottom: 16px; display: flex;
-    justify-content: space-between; align-items: center;
-  }
-  .modal-close {
-    background: none; border: none; color: var(--text-dim); font-size: 1.5em;
-    cursor: pointer; padding: 0 4px;
-  }
+  .modal h3 { color: var(--accent); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .modal-close { background: none; border: none; color: var(--text-dim); font-size: 1.5em; cursor: pointer; }
   .modal-close:hover { color: var(--text); }
   .modal-match {
     display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
@@ -302,15 +253,37 @@
   .modal-group-header { font-weight: 700; color: var(--accent); padding: 12px 0 6px; font-size: 0.95em; }
   .modal-group-header.ko { color: var(--ko-accent); }
 
+  /* Status indicator */
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .status-dot.online { background: var(--green); }
+  .status-dot.saving { background: var(--accent); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--green); color: #fff; padding: 12px 28px; border-radius: 8px;
+    font-weight: 700; transition: transform 0.3s; z-index: 999;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Loading */
+  .loading { text-align: center; padding: 60px 20px; color: var(--text-dim); }
+  .loading .spinner {
+    width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   @media (max-width: 500px) {
     header h1 { font-size: 1.6em; }
     .groups-container { grid-template-columns: 1fr; padding: 12px; gap: 14px; }
+    .join-bar { flex-direction: column; align-items: stretch; }
+    .join-bar input { width: 100%; }
     .toolbar { flex-direction: column; align-items: stretch; }
     .toolbar input[type="text"] { width: 100%; }
     .match { padding: 8px 10px; gap: 4px; }
     .team { font-size: 0.82em; }
     .score-inputs input { width: 32px; height: 30px; font-size: 0.9em; }
-    .share-url { flex-direction: column; }
     .scoreboard-row { grid-template-columns: 32px 1fr 60px 60px; padding: 10px 12px; }
     .tab { padding: 10px 16px; font-size: 0.85em; }
     .ko-match-config { grid-template-columns: 1fr; gap: 4px; }
@@ -325,94 +298,89 @@
   <p>Voorspel alle wedstrijden en deel met vrienden</p>
 </header>
 
-<div class="toolbar" id="editToolbar">
-  <input type="text" id="playerName" placeholder="Jouw naam..." maxlength="30">
-  <button class="btn" id="btnGenerate" onclick="generateLink()">Link kopieren</button>
-  <button class="btn btn-secondary" onclick="clearAll()">Wissen</button>
-  <input type="text" id="shareUrl" class="share-url-inline" readonly placeholder="Nog geen link gemaakt..." onclick="this.select()">
-</div>
-<div class="locked-banner hidden" id="lockedBanner">
-  Voorspellingen vergrendeld &mdash; link is gedeeld
-  <button class="btn" onclick="unlockPredictions()">Ontgrendelen &amp; nieuwe link maken</button>
-</div>
-
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('predict')">Voorspellen</div>
-  <div class="tab" onclick="switchTab('scores')">Scorebord</div>
-  <div class="tab" onclick="switchTab('pool')">Pool beheren</div>
-</div>
-
-<div class="info-bar" id="infoBarEdit">
-  Puntentelling: <strong>3 punten</strong> exacte score &bull; <strong>1 punt</strong> juiste uitslag (winst/gelijk/verlies)
-</div>
-
-<div id="predictView">
-  <div class="progress-section">
-    <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
-    <div class="progress-text"><span id="progressLabel"><span class="count">0</span> / 72 ingevuld</span><span id="progressPct">0%</span></div>
+<!-- Join/Create screen -->
+<div id="joinScreen">
+  <div class="join-bar">
+    <input type="text" id="poolCodeInput" placeholder="Pool code..." maxlength="20">
+    <button class="btn" onclick="joinPool()">Deelnemen</button>
+    <button class="btn btn-secondary" onclick="createPool()">Nieuwe pool</button>
   </div>
-  <div class="filters">
-    <button class="filter-btn active" onclick="setFilter('all',this)">Alle wedstrijden</button>
-    <button class="filter-btn" onclick="setFilter('empty',this)">Nog in te vullen</button>
-    <button class="filter-btn" onclick="setFilter('filled',this)">Ingevuld</button>
+</div>
+
+<!-- Pool active screen -->
+<div id="poolScreen" class="hidden">
+  <div class="pool-bar" id="poolBar">
+    <span>Pool: <span class="pool-code" id="poolCodeDisplay"></span></span>
+    <span id="poolStatus"><span class="status-dot online"></span>Verbonden</span>
+    <button class="btn btn-sm btn-secondary" onclick="leavePool()">Verlaten</button>
   </div>
-  <div class="groups-container" id="groupsContainer"></div>
-  <div id="koSectionPredict"></div>
-</div>
 
-<div id="scoresView" class="hidden">
-  <div class="scoreboard" id="scoreboard"></div>
-</div>
+  <div class="toolbar">
+    <input type="text" id="playerName" placeholder="Jouw naam..." maxlength="30" onchange="onNameChange()">
+    <button class="btn btn-sm" id="btnSave" onclick="savePredictions()">Opslaan</button>
+  </div>
 
-<div id="poolView" class="hidden">
-  <div class="pool-section">
-    <div class="pool-card">
-      <h3>Pool samenstellen</h3>
-      <p>Stap 1: Iedereen vult voorspellingen in en maakt een persoonlijke link.<br>
-         Stap 2: Plak alle links hieronder (een per regel).<br>
-         Stap 3: Klik op "Pool link maken" voor een gedeeld scorebord.</p>
-      <textarea class="pool-textarea" id="poolLinksInput" placeholder="Plak hier de persoonlijke links, een per regel..."></textarea>
-      <div class="pool-actions">
-        <button class="btn" onclick="parsePoolLinks()">Links toevoegen</button>
-        <button class="btn btn-secondary" onclick="addSelfToPool()">Voeg jezelf toe</button>
-      </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('predict')">Voorspellen</div>
+    <div class="tab" onclick="switchTab('scores')">Scorebord</div>
+    <div class="tab" id="adminTab" onclick="switchTab('admin')">Beheer</div>
+  </div>
+
+  <div class="info-bar">
+    Puntentelling: <strong>3 punten</strong> exacte score &bull; <strong>1 punt</strong> juiste uitslag (winst/gelijk/verlies)
+  </div>
+
+  <div id="predictView">
+    <div class="progress-section">
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
+      <div class="progress-text"><span id="progressLabel"><span class="count">0</span> / 72 ingevuld</span><span id="progressPct">0%</span></div>
     </div>
+    <div class="groups-container" id="groupsContainer"></div>
+    <div id="koSectionPredict"></div>
+  </div>
 
-    <div class="pool-card" id="poolMembersCard" style="display:none">
-      <h3>Deelnemers (<span id="poolMemberCount">0</span>)</h3>
-      <div class="pool-members" id="poolMembersList"></div>
-      <div class="pool-actions">
-        <button class="btn" onclick="generatePoolLink()">Pool link maken</button>
-        <button class="btn btn-secondary" onclick="clearPool()">Pool wissen</button>
-      </div>
-      <div class="share-url" style="margin-top:16px">
-        <input type="text" id="poolShareUrl" readonly placeholder="Klik op 'Pool link maken'..." style="flex:1;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:0.85em;font-family:monospace">
-        <button class="btn" onclick="copyPoolLink()">Kopieer</button>
-      </div>
-    </div>
+  <div id="scoresView" class="hidden">
+    <div class="scoreboard" id="scoreboard"></div>
+  </div>
 
-    <div class="pool-card">
-      <div class="section-toggle" onclick="toggleSection('knockoutAdmin')">
-        <span class="arrow" id="knockoutAdminArrow">&#9654;</span>
-        <span>Knockout-rondes instellen</span>
+  <div id="adminView" class="hidden">
+    <div class="admin-section">
+      <div class="admin-card">
+        <h3>Pool delen</h3>
+        <p>Deel deze code met je collega's. Zij vullen de code in en kunnen meteen meedoen.</p>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-family:monospace;font-size:1.4em;color:var(--accent);letter-spacing:3px;font-weight:800" id="adminPoolCode"></span>
+          <button class="btn btn-sm" onclick="copyPoolCode()">Kopieer code</button>
+          <button class="btn btn-sm btn-secondary" onclick="copyPoolUrl()">Kopieer link</button>
+        </div>
       </div>
-      <div id="knockoutAdminSection" class="hidden">
-        <p>Voeg knockout-wedstrijden toe zodra de groepsfase voorbij is. Selecteer de teams per wedstrijd. Deelnemers kunnen daarna hun voorspellingen aanvullen.</p>
-        <div id="koRoundsAdmin"></div>
-      </div>
-    </div>
 
-    <div class="pool-card">
-      <div class="section-toggle" onclick="toggleSection('results')">
-        <span class="arrow" id="resultsArrow">&#9654;</span>
-        <span>Echte uitslagen invullen (voor puntentelling)</span>
+      <div class="admin-card">
+        <div class="section-toggle" onclick="toggleSection('knockout')">
+          <span class="arrow" id="knockoutArrow">&#9654;</span>
+          <span>Knockout-rondes instellen</span>
+        </div>
+        <div id="knockoutSection" class="hidden">
+          <p>Voeg knockout-wedstrijden toe zodra teams bekend zijn.</p>
+          <div id="koRoundsAdmin"></div>
+          <div style="margin-top:12px">
+            <button class="btn" onclick="saveKnockoutDefs()">Knockout opslaan</button>
+          </div>
+        </div>
       </div>
-      <div id="resultsSection" class="hidden">
-        <p>Vul hier de echte wedstrijduitslagen in. Het scorebord berekent dan automatisch de punten.</p>
-        <div class="groups-container" id="resultsContainer" style="padding:12px 0"></div>
-        <div id="koResultsContainer"></div>
-        <div class="pool-actions">
-          <button class="btn" onclick="saveResults()">Uitslagen opslaan</button>
+
+      <div class="admin-card">
+        <div class="section-toggle" onclick="toggleSection('results')">
+          <span class="arrow" id="resultsArrow">&#9654;</span>
+          <span>Echte uitslagen invullen</span>
+        </div>
+        <div id="resultsSection" class="hidden">
+          <p>Vul de echte uitslagen in. Het scorebord updatet automatisch voor iedereen.</p>
+          <div class="groups-container" id="resultsContainer" style="padding:12px 0"></div>
+          <div id="koResultsContainer"></div>
+          <div style="margin-top:12px">
+            <button class="btn" onclick="saveResultsToFirebase()">Uitslagen opslaan</button>
+          </div>
         </div>
       </div>
     </div>
@@ -422,7 +390,35 @@
 <div class="toast" id="toast"></div>
 <div id="modalRoot"></div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+
 <script>
+// --- Firebase config ---
+const firebaseConfig = {
+  apiKey: "AIzaSyB86dXNn5MkRSzWvRAk4CcWK9kjP-at2Ik",
+  authDomain: "wkpool-2026.firebaseapp.com",
+  databaseURL: "https://wkpool-2026-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "wkpool-2026",
+  storageBucket: "wkpool-2026.firebasestorage.app",
+  messagingSenderId: "816701996780",
+  appId: "1:816701996780:web:ec0acb555a9038b985afc9"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+let currentUser = null;
+let currentPoolId = null;
+let isAdmin = false;
+let poolRef = null;
+let poolData = { players: {}, results: {}, knockoutDefs: {}, config: {} };
+let saveTimeout = null;
+
+// --- Data constants ---
 const FLAGS = {
   "Mexico":"\u{1F1F2}\u{1F1FD}","South Africa":"\u{1F1FF}\u{1F1E6}","South Korea":"\u{1F1F0}\u{1F1F7}","Czechia":"\u{1F1E8}\u{1F1FF}",
   "Canada":"\u{1F1E8}\u{1F1E6}","Bosnia and Herzegovina":"\u{1F1E7}\u{1F1E6}","Qatar":"\u{1F1F6}\u{1F1E6}","Switzerland":"\u{1F1E8}\u{1F1ED}",
@@ -439,32 +435,29 @@ const FLAGS = {
 };
 
 const GROUPS = {
-  A: ["Mexico","South Africa","South Korea","Czechia"],
-  B: ["Canada","Bosnia and Herzegovina","Qatar","Switzerland"],
-  C: ["Brazil","Haiti","Morocco","Scotland"],
-  D: ["USA","Australia","Paraguay","Turkiye"],
-  E: ["Germany","Ecuador","Curacao","Ivory Coast"],
-  F: ["Japan","Netherlands","Sweden","Tunisia"],
-  G: ["Belgium","Egypt","Iran","New Zealand"],
-  H: ["Spain","Uruguay","Saudi Arabia","Cape Verde"],
-  I: ["France","Senegal","Norway","Iraq"],
-  J: ["Argentina","Algeria","Austria","Jordan"],
-  K: ["Portugal","Colombia","DR Congo","Uzbekistan"],
-  L: ["England","Croatia","Ghana","Panama"]
+  A:["Mexico","South Africa","South Korea","Czechia"],
+  B:["Canada","Bosnia and Herzegovina","Qatar","Switzerland"],
+  C:["Brazil","Haiti","Morocco","Scotland"],
+  D:["USA","Australia","Paraguay","Turkiye"],
+  E:["Germany","Ecuador","Curacao","Ivory Coast"],
+  F:["Japan","Netherlands","Sweden","Tunisia"],
+  G:["Belgium","Egypt","Iran","New Zealand"],
+  H:["Spain","Uruguay","Saudi Arabia","Cape Verde"],
+  I:["France","Senegal","Norway","Iraq"],
+  J:["Argentina","Algeria","Austria","Jordan"],
+  K:["Portugal","Colombia","DR Congo","Uzbekistan"],
+  L:["England","Croatia","Ghana","Panama"]
 };
 
 const GROUP_LETTERS = Object.keys(GROUPS);
-const MATCHES_PER_GROUP = 6;
-const GROUP_MATCHES_TOTAL = GROUP_LETTERS.length * MATCHES_PER_GROUP; // 72
-const ALL_TEAMS = Object.values(GROUPS).flat(); // 48 teams
-
+const ALL_TEAMS = Object.values(GROUPS).flat();
 const KO_ROUNDS = [
-  { id: 'R32', name: 'Ronde van 32', count: 16 },
-  { id: 'R16', name: 'Ronde van 16', count: 8 },
-  { id: 'QF',  name: 'Kwartfinales', count: 4 },
-  { id: 'SF',  name: 'Halve finales', count: 2 },
-  { id: 'TP',  name: 'Troostfinale', count: 1 },
-  { id: 'FI',  name: 'Finale', count: 1 }
+  {id:'R32',name:'Ronde van 32',count:16},
+  {id:'R16',name:'Ronde van 16',count:8},
+  {id:'QF',name:'Kwartfinales',count:4},
+  {id:'SF',name:'Halve finales',count:2},
+  {id:'TP',name:'Troostfinale',count:1},
+  {id:'FI',name:'Finale',count:1}
 ];
 
 function getMatches(teams) {
@@ -474,262 +467,195 @@ function getMatches(teams) {
       m.push([teams[i], teams[j]]);
   return m;
 }
-
 function flag(t) { return FLAGS[t] || ''; }
 
-// --- Compact encoding ---
-function scoreToChar(n) { return n.toString(36); }
-function charToScore(c) { return parseInt(c, 36); }
-
-function compactEncodeGroup(preds) {
-  let s = '';
-  for (const letter of GROUP_LETTERS) {
-    for (let i = 0; i < MATCHES_PER_GROUP; i++) {
-      const key = `${letter}_${i}`;
-      if (preds[key]) {
-        const [h, a] = preds[key].split('-').map(Number);
-        s += scoreToChar(h) + scoreToChar(a);
-      } else { s += '--'; }
-    }
-  }
-  return s;
-}
-
-function compactDecodeGroup(s) {
-  const preds = {};
-  let idx = 0;
-  for (const letter of GROUP_LETTERS) {
-    for (let i = 0; i < MATCHES_PER_GROUP; i++) {
-      if (idx + 1 >= s.length) break;
-      const h = s[idx], a = s[idx + 1];
-      idx += 2;
-      if (h !== '-' && a !== '-') {
-        preds[`${letter}_${i}`] = `${charToScore(h)}-${charToScore(a)}`;
-      }
-    }
-  }
-  return preds;
-}
-
-function compactEncodeKO(preds) {
-  let s = '';
-  for (const round of KO_ROUNDS) {
-    for (let i = 0; i < round.count; i++) {
-      const key = `${round.id}_${i}`;
-      if (preds[key]) {
-        const [h, a] = preds[key].split('-').map(Number);
-        s += scoreToChar(h) + scoreToChar(a);
-      } else { s += '--'; }
-    }
-  }
-  return s; // always 64 chars
-}
-
-function compactDecodeKO(s) {
-  const preds = {};
-  let idx = 0;
-  for (const round of KO_ROUNDS) {
-    for (let i = 0; i < round.count; i++) {
-      if (idx + 1 >= s.length) break;
-      const h = s[idx], a = s[idx + 1];
-      idx += 2;
-      if (h !== '-' && a !== '-') {
-        preds[`${round.id}_${i}`] = `${charToScore(h)}-${charToScore(a)}`;
-      }
-    }
-  }
-  return preds;
-}
-
-function countFilled(preds) { return Object.keys(preds).length; }
-
-function countKODefined() {
-  let total = 0;
-  for (const round of KO_ROUNDS) {
-    if (knockoutDefs[round.id]) total += knockoutDefs[round.id].length;
+function getTotalMatches() {
+  let total = 72;
+  for (const r of KO_ROUNDS) {
+    const defs = poolData.knockoutDefs[r.id];
+    if (defs) total += Object.keys(defs).length;
   }
   return total;
 }
 
-function getTotalMatches() {
-  return GROUP_MATCHES_TOTAL + countKODefined();
+// --- Auth ---
+auth.signInAnonymously().then(cred => {
+  currentUser = cred.user;
+  const savedPool = localStorage.getItem('wkpool_current');
+  const hashPool = window.location.hash.slice(1);
+  if (hashPool) {
+    document.getElementById('poolCodeInput').value = hashPool;
+    joinPool();
+  } else if (savedPool) {
+    document.getElementById('poolCodeInput').value = savedPool;
+    joinPool();
+  }
+}).catch(err => {
+  showToast('Authenticatie mislukt: ' + err.message, true);
+});
+
+// --- Pool join/create ---
+function createPool() {
+  if (!currentUser) return;
+  const code = generatePoolCode();
+  const name = prompt('Naam van de pool:', 'WK Pool 2026');
+  if (!name) return;
+
+  const poolRef = db.ref('pools/' + code);
+  poolRef.set({
+    config: { admin: currentUser.uid, name: name, created: Date.now() },
+    players: {},
+    results: {},
+    knockoutDefs: {}
+  }).then(() => {
+    document.getElementById('poolCodeInput').value = code;
+    joinPool();
+    showToast('Pool aangemaakt! Code: ' + code);
+  }).catch(err => showToast('Fout: ' + err.message, true));
 }
 
-// --- State ---
-let poolPlayers = [];
-let actualResults = {};
-let knockoutDefs = {}; // {R32: [[teamA,teamB],...], ...}
-let viewMode = false;
-let isPoolView = false;
-let isLocked = false;
+function generatePoolCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
 
-// --- Build group match UI ---
+function joinPool() {
+  const code = document.getElementById('poolCodeInput').value.trim().toUpperCase();
+  if (!code) { showToast('Vul een pool code in', true); return; }
+  if (!currentUser) { showToast('Even wachten op verbinding...', true); return; }
+
+  db.ref('pools/' + code + '/config').once('value').then(snap => {
+    if (!snap.exists()) {
+      showToast('Pool niet gevonden', true);
+      return;
+    }
+    currentPoolId = code;
+    localStorage.setItem('wkpool_current', code);
+    window.location.hash = code;
+    enterPool();
+  }).catch(err => showToast('Fout: ' + err.message, true));
+}
+
+function leavePool() {
+  if (poolRef) poolRef.off();
+  currentPoolId = null;
+  isAdmin = false;
+  localStorage.removeItem('wkpool_current');
+  window.location.hash = '';
+  document.getElementById('joinScreen').classList.remove('hidden');
+  document.getElementById('poolScreen').classList.add('hidden');
+}
+
+function enterPool() {
+  document.getElementById('joinScreen').classList.add('hidden');
+  document.getElementById('poolScreen').classList.remove('hidden');
+  document.getElementById('poolCodeDisplay').textContent = currentPoolId;
+  document.getElementById('adminPoolCode').textContent = currentPoolId;
+
+  // Build UI
+  buildGroupUI('groupsContainer');
+
+  // Load saved name
+  const savedName = localStorage.getItem('wkpool_name');
+  if (savedName) document.getElementById('playerName').value = savedName;
+
+  // Listen to pool data
+  poolRef = db.ref('pools/' + currentPoolId);
+  poolRef.on('value', snap => {
+    const data = snap.val();
+    if (!data) return;
+    poolData.config = data.config || {};
+    poolData.players = data.players || {};
+    poolData.results = data.results || {};
+    poolData.knockoutDefs = data.knockoutDefs || {};
+
+    isAdmin = poolData.config.admin === currentUser.uid;
+    document.getElementById('adminTab').style.display = isAdmin ? '' : 'none';
+
+    // Load own predictions into form
+    const myData = poolData.players[currentUser.uid];
+    if (myData && myData.preds) {
+      setPredictions(myData.preds);
+    }
+    if (myData && myData.name && !document.getElementById('playerName').value) {
+      document.getElementById('playerName').value = myData.name;
+    }
+
+    buildKOPredictUI();
+    if (myData && myData.preds) setPredictions(myData.preds); // re-set for KO fields
+    updateProgress();
+    if (document.getElementById('scoresView').classList.contains('hidden') === false) {
+      buildScoreboard();
+    }
+  });
+}
+
+// --- Build group UI ---
 function buildGroupUI(containerId, prefix, readonly) {
+  prefix = prefix || '';
   const container = document.getElementById(containerId);
   container.innerHTML = '';
   for (const [letter, teams] of Object.entries(GROUPS)) {
     const matches = getMatches(teams);
-    const groupDiv = document.createElement('div');
-    groupDiv.className = 'group';
-    if (readonly) groupDiv.classList.add('view-mode');
-    const handler = prefix === 'r_' ? 'onResultChange()' : 'onScoreChange()';
+    const div = document.createElement('div');
+    div.className = 'group';
+    const handler = prefix === 'r_' ? '' : 'onScoreInput()';
     let html = `<div class="group-header"><div class="group-letter">${letter}</div>Groep ${letter}<span class="group-count" id="${prefix}gc_${letter}">0/6</span></div>`;
     matches.forEach((m, i) => {
       const id = `${prefix}${letter}_${i}`;
       html += `<div class="match" id="${prefix}match_${letter}_${i}">
         <div class="team home"><span>${m[0]}</span><span class="flag">${flag(m[0])}</span></div>
         <div class="score-inputs">
-          <input type="number" min="0" max="20" id="${id}_h" onchange="${handler}" oninput="this.value=this.value.slice(0,2)" ${readonly?'readonly':''}>
+          <input type="number" min="0" max="20" id="${id}_h" oninput="this.value=this.value.slice(0,2);${handler}" ${readonly?'readonly':''}>
           <span>-</span>
-          <input type="number" min="0" max="20" id="${id}_a" onchange="${handler}" oninput="this.value=this.value.slice(0,2)" ${readonly?'readonly':''}>
+          <input type="number" min="0" max="20" id="${id}_a" oninput="this.value=this.value.slice(0,2);${handler}" ${readonly?'readonly':''}>
           <span class="check">&#10003;</span>
         </div>
         <div class="team away"><span class="flag">${flag(m[1])}</span><span>${m[1]}</span></div>
       </div>`;
     });
-    groupDiv.innerHTML = html;
-    container.appendChild(groupDiv);
+    div.innerHTML = html;
+    container.appendChild(div);
   }
 }
 
-// --- Build knockout match UI for predictions ---
+// --- Build KO predict UI ---
 function buildKOPredictUI() {
   const container = document.getElementById('koSectionPredict');
-  const defined = KO_ROUNDS.filter(r => knockoutDefs[r.id] && knockoutDefs[r.id].length > 0);
+  const kd = poolData.knockoutDefs;
+  const defined = KO_ROUNDS.filter(r => kd[r.id] && Object.keys(kd[r.id]).length > 0);
   if (defined.length === 0) { container.innerHTML = ''; return; }
 
-  let html = `<div class="section-divider"><div class="section-divider-inner">Knockout-rondes</div></div>`;
-  html += `<div class="groups-container">`;
-
+  let html = `<div class="section-divider"><div class="section-divider-inner">Knockout-rondes</div></div><div class="groups-container">`;
   for (const round of defined) {
-    const matches = knockoutDefs[round.id];
-    const groupDiv = `<div class="group ko-round${isLocked?' view-mode':''}">
-      <div class="group-header"><div class="group-letter">${round.id === 'FI' ? 'F' : round.id === 'TP' ? 'T' : round.id}</div>${round.name}<span class="group-count" id="gc_ko_${round.id}">0/${matches.length}</span></div>`;
-    let matchesHtml = '';
-    matches.forEach((m, i) => {
-      const id = `${round.id}_${i}`;
-      matchesHtml += `<div class="match" id="match_${id}">
-        <div class="team home"><span>${m[0]}</span><span class="flag">${flag(m[0])}</span></div>
+    const matches = kd[round.id];
+    const keys = Object.keys(matches).sort((a,b) => parseInt(a) - parseInt(b));
+    html += `<div class="group ko-round"><div class="group-header"><div class="group-letter">${round.id==='FI'?'F':round.id==='TP'?'T':round.id}</div>${round.name}<span class="group-count" id="gc_ko_${round.id}">0/${keys.length}</span></div>`;
+    for (const k of keys) {
+      const m = matches[k];
+      html += `<div class="match" id="match_${round.id}_${k}">
+        <div class="team home"><span>${m.home}</span><span class="flag">${flag(m.home)}</span></div>
         <div class="score-inputs">
-          <input type="number" min="0" max="20" id="${id}_h" onchange="onScoreChange()" oninput="this.value=this.value.slice(0,2)" ${isLocked?'readonly':''}>
+          <input type="number" min="0" max="20" id="${round.id}_${k}_h" oninput="this.value=this.value.slice(0,2);onScoreInput()">
           <span>-</span>
-          <input type="number" min="0" max="20" id="${id}_a" onchange="onScoreChange()" oninput="this.value=this.value.slice(0,2)" ${isLocked?'readonly':''}>
+          <input type="number" min="0" max="20" id="${round.id}_${k}_a" oninput="this.value=this.value.slice(0,2);onScoreInput()">
           <span class="check">&#10003;</span>
         </div>
-        <div class="team away"><span class="flag">${flag(m[1])}</span><span>${m[1]}</span></div>
-      </div>`;
-    });
-    html += groupDiv + matchesHtml + '</div>';
-  }
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-// --- Build knockout results UI ---
-function buildKOResultsUI() {
-  const container = document.getElementById('koResultsContainer');
-  const defined = KO_ROUNDS.filter(r => knockoutDefs[r.id] && knockoutDefs[r.id].length > 0);
-  if (defined.length === 0) { container.innerHTML = ''; return; }
-
-  let html = `<div class="section-divider"><div class="section-divider-inner">Knockout uitslagen</div></div>`;
-  html += `<div class="groups-container" style="padding:12px 0">`;
-  for (const round of defined) {
-    const matches = knockoutDefs[round.id];
-    let groupHtml = `<div class="group ko-round">
-      <div class="group-header"><div class="group-letter">${round.id === 'FI' ? 'F' : round.id === 'TP' ? 'T' : round.id}</div>${round.name}</div>`;
-    matches.forEach((m, i) => {
-      const id = `r_${round.id}_${i}`;
-      groupHtml += `<div class="match">
-        <div class="team home"><span>${m[0]}</span><span class="flag">${flag(m[0])}</span></div>
-        <div class="score-inputs">
-          <input type="number" min="0" max="20" id="${id}_h" onchange="onResultChange()" oninput="this.value=this.value.slice(0,2)">
-          <span>-</span>
-          <input type="number" min="0" max="20" id="${id}_a" onchange="onResultChange()" oninput="this.value=this.value.slice(0,2)">
-        </div>
-        <div class="team away"><span class="flag">${flag(m[1])}</span><span>${m[1]}</span></div>
-      </div>`;
-    });
-    html += groupHtml + '</div>';
-  }
-  html += '</div>';
-  container.innerHTML = html;
-}
-
-// --- Knockout admin UI ---
-function buildKOAdminUI() {
-  const container = document.getElementById('koRoundsAdmin');
-  let html = '';
-  for (const round of KO_ROUNDS) {
-    const defs = knockoutDefs[round.id] || [];
-    const hasMatches = defs.length > 0;
-    const badge = hasMatches ? `<span class="ko-badge">${defs.length} wedstrijden</span>` : `<span class="ko-badge empty">Nog niet ingesteld</span>`;
-
-    html += `<div class="ko-round-config">
-      <div class="ko-round-header" onclick="toggleKORound('${round.id}')">
-        <span>${round.name} (${round.count} wedstrijden)</span>
-        ${badge}
-      </div>
-      <div id="koBody_${round.id}" class="hidden">`;
-
-    for (let i = 0; i < round.count; i++) {
-      const home = defs[i] ? defs[i][0] : '';
-      const away = defs[i] ? defs[i][1] : '';
-      html += `<div class="ko-match-config">
-        <select id="ko_${round.id}_${i}_h" onchange="onKODefChange()">
-          <option value="">-- Thuis --</option>
-          ${ALL_TEAMS.map(t => `<option value="${t}" ${t===home?'selected':''}>${flag(t)} ${t}</option>`).join('')}
-        </select>
-        <span class="vs">vs</span>
-        <select id="ko_${round.id}_${i}_a" onchange="onKODefChange()">
-          <option value="">-- Uit --</option>
-          ${ALL_TEAMS.map(t => `<option value="${t}" ${t===away?'selected':''}>${flag(t)} ${t}</option>`).join('')}
-        </select>
+        <div class="team away"><span class="flag">${flag(m.away)}</span><span>${m.away}</span></div>
       </div>`;
     }
-
-    html += `<div style="padding:10px 16px">
-        <button class="btn btn-sm" onclick="clearKORound('${round.id}')">Ronde wissen</button>
-      </div></div></div>`;
+    html += `</div>`;
   }
+  html += `</div>`;
   container.innerHTML = html;
 }
 
-function toggleKORound(roundId) {
-  const body = document.getElementById(`koBody_${roundId}`);
-  body.classList.toggle('hidden');
-}
-
-function onKODefChange() {
-  knockoutDefs = {};
-  for (const round of KO_ROUNDS) {
-    const matches = [];
-    for (let i = 0; i < round.count; i++) {
-      const hEl = document.getElementById(`ko_${round.id}_${i}_h`);
-      const aEl = document.getElementById(`ko_${round.id}_${i}_a`);
-      if (hEl && aEl && hEl.value && aEl.value) {
-        matches.push([hEl.value, aEl.value]);
-      }
-    }
-    if (matches.length > 0) knockoutDefs[round.id] = matches;
-  }
-  saveKOLocal();
-  buildKOPredictUI();
-  buildKOAdminUI();
-}
-
-function clearKORound(roundId) {
-  delete knockoutDefs[roundId];
-  saveKOLocal();
-  buildKOAdminUI();
-  buildKOPredictUI();
-  showToast(`${KO_ROUNDS.find(r => r.id === roundId).name} gewist`);
-}
-
-// --- Get/set all predictions (group + knockout) ---
+// --- Get/set predictions ---
 function getAllPredictions(prefix) {
   prefix = prefix || '';
   const preds = {};
-  // Groups
   for (const [letter, teams] of Object.entries(GROUPS)) {
     getMatches(teams).forEach((m, i) => {
       const hEl = document.getElementById(`${prefix}${letter}_${i}_h`);
@@ -739,17 +665,16 @@ function getAllPredictions(prefix) {
       }
     });
   }
-  // Knockout
+  const kd = poolData.knockoutDefs;
   for (const round of KO_ROUNDS) {
-    const defs = knockoutDefs[round.id];
-    if (!defs) continue;
-    defs.forEach((m, i) => {
-      const hEl = document.getElementById(`${prefix}${round.id}_${i}_h`);
-      const aEl = document.getElementById(`${prefix}${round.id}_${i}_a`);
+    if (!kd[round.id]) continue;
+    for (const k of Object.keys(kd[round.id])) {
+      const hEl = document.getElementById(`${prefix}${round.id}_${k}_h`);
+      const aEl = document.getElementById(`${prefix}${round.id}_${k}_a`);
       if (hEl && aEl && hEl.value !== '' && aEl.value !== '') {
-        preds[`${round.id}_${i}`] = `${hEl.value}-${aEl.value}`;
+        preds[`${round.id}_${k}`] = `${hEl.value}-${aEl.value}`;
       }
-    });
+    }
   }
   return preds;
 }
@@ -764,60 +689,36 @@ function setPredictions(preds, prefix) {
   }
 }
 
-// --- Personal link encoding (base64, backward compat) ---
-function encodePredictions(name, preds) {
-  const data = { n: name, p: preds };
-  return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-}
-function decodePredictions(encoded) {
-  try { return JSON.parse(decodeURIComponent(escape(atob(encoded)))); }
-  catch { return null; }
+// --- Auto-save with debounce ---
+function onScoreInput() {
+  updateProgress();
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => savePredictions(), 2000);
+  document.getElementById('btnSave').textContent = 'Opslaan...';
 }
 
-// --- Pool link encoding ---
-// Format: #P~groupResults~koResults~name1~groupPreds1~koPreds1~name2~...~KD~base64(knockoutDefs)
-function encodePoolLink() {
-  const grpResults = compactEncodeGroup(actualResults);
-  const koResults = compactEncodeKO(actualResults);
-  let parts = ['P', grpResults, koResults];
-  for (const p of poolPlayers) {
-    parts.push(encodeURIComponent(p.name));
-    parts.push(compactEncodeGroup(p.preds));
-    parts.push(compactEncodeKO(p.preds));
-  }
-  // Append knockout defs
-  if (Object.keys(knockoutDefs).length > 0) {
-    const kdJson = JSON.stringify(knockoutDefs);
-    parts.push('KD');
-    parts.push(btoa(unescape(encodeURIComponent(kdJson))));
-  }
-  return parts.join('~');
+function onNameChange() {
+  const name = document.getElementById('playerName').value.trim();
+  if (name) localStorage.setItem('wkpool_name', name);
 }
 
-function decodePoolLink(hash) {
-  const parts = hash.split('~');
-  if (parts[0] !== 'P' || parts.length < 6) return null;
+function savePredictions() {
+  if (!currentUser || !currentPoolId) return;
+  const name = document.getElementById('playerName').value.trim() || 'Anoniem';
+  const preds = getAllPredictions();
+  localStorage.setItem('wkpool_name', name);
 
-  const grpResults = compactDecodeGroup(parts[1]);
-  const koResults = compactDecodeKO(parts[2]);
-  const results = { ...grpResults, ...koResults };
-
-  // Find KD marker
-  let kdIdx = parts.indexOf('KD');
-  let kd = {};
-  if (kdIdx >= 0 && parts[kdIdx + 1]) {
-    try { kd = JSON.parse(decodeURIComponent(escape(atob(parts[kdIdx + 1])))); } catch {}
-  }
-
-  const playerEnd = kdIdx >= 0 ? kdIdx : parts.length;
-  const players = [];
-  for (let i = 3; i < playerEnd - 2; i += 3) {
-    const name = decodeURIComponent(parts[i]);
-    const grpPreds = compactDecodeGroup(parts[i + 1]);
-    const koPreds = compactDecodeKO(parts[i + 2]);
-    players.push({ name, preds: { ...grpPreds, ...koPreds } });
-  }
-  return { results, players, knockoutDefs: kd };
+  db.ref(`pools/${currentPoolId}/players/${currentUser.uid}`).set({
+    name: name,
+    preds: preds,
+    updated: Date.now()
+  }).then(() => {
+    document.getElementById('btnSave').textContent = 'Opgeslagen!';
+    setTimeout(() => { document.getElementById('btnSave').textContent = 'Opslaan'; }, 1500);
+  }).catch(err => {
+    showToast('Opslaan mislukt: ' + err.message, true);
+    document.getElementById('btnSave').textContent = 'Opslaan';
+  });
 }
 
 // --- Score calculation ---
@@ -825,412 +726,211 @@ function calculatePoints(preds, results) {
   let points = 0, exact = 0, partial = 0;
   for (const key of Object.keys(results)) {
     if (!preds[key]) continue;
-    const [h1, a1] = preds[key].split('-').map(Number);
-    const [h2, a2] = results[key].split('-').map(Number);
-    if (h1 === h2 && a1 === a2) { points += 3; exact++; }
-    else if (Math.sign(h1 - a1) === Math.sign(h2 - a2)) { points += 1; partial++; }
+    const [h1,a1] = preds[key].split('-').map(Number);
+    const [h2,a2] = results[key].split('-').map(Number);
+    if (h1===h2 && a1===a2) { points+=3; exact++; }
+    else if (Math.sign(h1-a1)===Math.sign(h2-a2)) { points+=1; partial++; }
   }
   return { points, exact, partial };
 }
 
 function getMatchResult(preds, results, key) {
   if (!results[key] || !preds[key]) return 'none';
-  const [h1, a1] = preds[key].split('-').map(Number);
-  const [h2, a2] = results[key].split('-').map(Number);
-  if (h1 === h2 && a1 === a2) return 'exact';
-  if (Math.sign(h1 - a1) === Math.sign(h2 - a2)) return 'partial';
+  const [h1,a1] = preds[key].split('-').map(Number);
+  const [h2,a2] = results[key].split('-').map(Number);
+  if (h1===h2 && a1===a2) return 'exact';
+  if (Math.sign(h1-a1)===Math.sign(h2-a2)) return 'partial';
   return 'wrong';
-}
-
-// --- Link generation & locking ---
-function generateLink() {
-  const name = document.getElementById('playerName').value.trim() || 'Anoniem';
-  const preds = getAllPredictions();
-  const filled = Object.keys(preds).length;
-  if (filled === 0) { showToast('Vul eerst wat scores in!', true); return; }
-  const encoded = encodePredictions(name, preds);
-  const url = window.location.origin + window.location.pathname + '#' + encoded;
-  const input = document.getElementById('shareUrl');
-  input.value = url;
-  input.classList.add('has-link');
-  saveLocal();
-  lockPredictions();
-  navigator.clipboard.writeText(url).then(() => {
-    showToast(`Link gekopieerd en vergrendeld! (${filled}/${getTotalMatches()})`);
-  }).catch(() => {
-    showToast(`Link gemaakt en vergrendeld! (${filled}/${getTotalMatches()})`);
-  });
-}
-
-function lockPredictions() {
-  isLocked = true;
-  document.getElementById('groupsContainer').classList.add('locked');
-  document.getElementById('playerName').readOnly = true;
-  document.getElementById('btnGenerate').style.display = 'none';
-  document.getElementById('lockedBanner').classList.remove('hidden');
-  localStorage.setItem('wkpool2026_locked', '1');
-  buildKOPredictUI(); // rebuild to apply locked state
-}
-
-function unlockPredictions() {
-  isLocked = false;
-  document.getElementById('groupsContainer').classList.remove('locked');
-  document.getElementById('playerName').readOnly = false;
-  document.getElementById('btnGenerate').style.display = '';
-  document.getElementById('lockedBanner').classList.add('hidden');
-  document.getElementById('shareUrl').value = '';
-  document.getElementById('shareUrl').classList.remove('has-link');
-  localStorage.removeItem('wkpool2026_locked');
-  buildKOPredictUI();
-  showToast('Ontgrendeld! Pas je voorspellingen aan en maak een nieuwe link.');
-}
-
-function copyPoolLink() {
-  const input = document.getElementById('poolShareUrl');
-  if (!input.value) { showToast('Maak eerst een pool link!', true); return; }
-  navigator.clipboard.writeText(input.value).then(() => showToast('Link gekopieerd!')).catch(() => showToast('Kopieer handmatig', true));
-}
-
-function clearAll() {
-  if (isLocked) unlockPredictions();
-  document.querySelectorAll('#groupsContainer .score-inputs input').forEach(i => i.value = '');
-  document.querySelectorAll('#koSectionPredict .score-inputs input').forEach(i => i.value = '');
-  document.getElementById('playerName').value = '';
-  document.getElementById('shareUrl').value = '';
-  document.getElementById('shareUrl').classList.remove('has-link');
-  localStorage.removeItem('wkpool2026');
-  localStorage.removeItem('wkpool2026_locked');
-  updateProgress();
-  showToast('Alles gewist');
-}
-
-// --- Local storage ---
-function saveLocal() {
-  const name = document.getElementById('playerName').value.trim();
-  const preds = getAllPredictions();
-  localStorage.setItem('wkpool2026', JSON.stringify({ n: name, p: preds }));
-}
-
-function loadLocal() {
-  const saved = localStorage.getItem('wkpool2026');
-  if (saved) {
-    try {
-      const data = JSON.parse(saved);
-      if (data.n) document.getElementById('playerName').value = data.n;
-      if (data.p) setPredictions(data.p);
-    } catch {}
-  }
-}
-
-function savePoolLocal() {
-  localStorage.setItem('wkpool2026_pool', JSON.stringify({ players: poolPlayers, results: actualResults, kd: knockoutDefs }));
-}
-
-function loadPoolLocal() {
-  const saved = localStorage.getItem('wkpool2026_pool');
-  if (saved) {
-    try {
-      const data = JSON.parse(saved);
-      if (data.players) poolPlayers = data.players;
-      if (data.results) actualResults = data.results;
-      if (data.kd) knockoutDefs = data.kd;
-    } catch {}
-  }
-}
-
-function saveKOLocal() {
-  localStorage.setItem('wkpool2026_ko', JSON.stringify(knockoutDefs));
-}
-
-function loadKOLocal() {
-  const saved = localStorage.getItem('wkpool2026_ko');
-  if (saved) { try { knockoutDefs = JSON.parse(saved); } catch {} }
-}
-
-function saveResultsLocal() {
-  localStorage.setItem('wkpool2026_results', JSON.stringify(actualResults));
-}
-
-function loadResultsLocal() {
-  const saved = localStorage.getItem('wkpool2026_results');
-  if (saved) { try { actualResults = JSON.parse(saved); } catch {} }
-}
-
-// --- Hash loading ---
-function loadFromHash() {
-  const hash = window.location.hash.slice(1);
-  if (!hash) return false;
-
-  if (hash.startsWith('P~')) {
-    const data = decodePoolLink(hash);
-    if (!data) return false;
-    poolPlayers = data.players;
-    actualResults = data.results;
-    if (data.knockoutDefs) knockoutDefs = data.knockoutDefs;
-    isPoolView = true;
-    savePoolLocal();
-    saveResultsLocal();
-    saveKOLocal();
-    buildKOPredictUI();
-    switchTab('scores');
-    return true;
-  }
-
-  const data = decodePredictions(hash);
-  if (!data) return false;
-  viewMode = true;
-  buildGroupUI('groupsContainer', '', true);
-  buildKOPredictUI();
-  if (data.n) document.getElementById('playerName').value = data.n;
-  if (data.p) setPredictions(data.p);
-  return true;
-}
-
-// --- Pool management ---
-function parsePoolLinks() {
-  const textarea = document.getElementById('poolLinksInput');
-  const lines = textarea.value.trim().split('\n').filter(l => l.trim());
-  let added = 0;
-
-  for (const line of lines) {
-    const hashIdx = line.indexOf('#');
-    if (hashIdx === -1) continue;
-    const hash = line.slice(hashIdx + 1);
-
-    if (hash.startsWith('P~')) {
-      const data = decodePoolLink(hash);
-      if (data) {
-        for (const p of data.players) {
-          if (!poolPlayers.some(pp => pp.name === p.name)) { poolPlayers.push(p); added++; }
-        }
-        if (data.knockoutDefs && Object.keys(data.knockoutDefs).length > 0) {
-          knockoutDefs = { ...knockoutDefs, ...data.knockoutDefs };
-          saveKOLocal();
-        }
-        continue;
-      }
-    }
-
-    const data = decodePredictions(hash);
-    if (data && data.p) {
-      const name = data.n || 'Anoniem';
-      const existing = poolPlayers.findIndex(p => p.name === name);
-      if (existing >= 0) { poolPlayers[existing].preds = data.p; }
-      else { poolPlayers.push({ name, preds: data.p }); added++; }
-    }
-  }
-
-  if (added > 0) {
-    savePoolLocal();
-    renderPoolMembers();
-    textarea.value = '';
-    showToast(`${added} deelnemer(s) toegevoegd!`);
-  } else { showToast('Geen geldige links gevonden', true); }
-}
-
-function addSelfToPool() {
-  const name = document.getElementById('playerName').value.trim() || 'Anoniem';
-  const preds = getAllPredictions();
-  if (Object.keys(preds).length === 0) { showToast('Vul eerst je voorspellingen in!', true); return; }
-  const existing = poolPlayers.findIndex(p => p.name === name);
-  if (existing >= 0) { poolPlayers[existing].preds = preds; showToast(`${name} bijgewerkt`); }
-  else { poolPlayers.push({ name, preds }); showToast(`${name} toegevoegd!`); }
-  savePoolLocal();
-  renderPoolMembers();
-}
-
-function removeFromPool(idx) { poolPlayers.splice(idx, 1); savePoolLocal(); renderPoolMembers(); }
-
-function clearPool() {
-  poolPlayers = [];
-  savePoolLocal();
-  renderPoolMembers();
-  document.getElementById('poolShareUrl').value = '';
-  showToast('Pool gewist');
-}
-
-function generatePoolLink() {
-  if (poolPlayers.length === 0) { showToast('Voeg eerst deelnemers toe!', true); return; }
-  actualResults = getAllPredictions('r_');
-  saveResultsLocal();
-  const hash = encodePoolLink();
-  const url = window.location.origin + window.location.pathname + '#' + hash;
-  document.getElementById('poolShareUrl').value = url;
-  showToast(`Pool link gemaakt met ${poolPlayers.length} deelnemer(s)!`);
-}
-
-function renderPoolMembers() {
-  const card = document.getElementById('poolMembersCard');
-  const list = document.getElementById('poolMembersList');
-  const count = document.getElementById('poolMemberCount');
-  if (poolPlayers.length === 0) { card.style.display = 'none'; return; }
-  card.style.display = '';
-  count.textContent = poolPlayers.length;
-  const total = getTotalMatches();
-  list.innerHTML = poolPlayers.map((p, i) => {
-    const filled = countFilled(p.preds);
-    return `<div class="pool-member">
-      <div class="member-info">
-        <span class="member-name">${p.name}</span>
-        <span class="member-count">${filled}/${total} ingevuld</span>
-      </div>
-      <button class="btn btn-danger btn-sm" onclick="removeFromPool(${i})">Verwijder</button>
-    </div>`;
-  }).join('');
-}
-
-// --- Sections toggle ---
-function toggleSection(name) {
-  const section = document.getElementById(`${name}Section`);
-  const arrow = document.getElementById(`${name}Arrow`);
-  section.classList.toggle('hidden');
-  arrow.classList.toggle('open');
-  if (name === 'results' && !section.classList.contains('hidden')) {
-    if (!document.getElementById('r_A_0_h')) {
-      buildGroupUI('resultsContainer', 'r_', false);
-      buildKOResultsUI();
-      if (Object.keys(actualResults).length > 0) setPredictions(actualResults, 'r_');
-    }
-  }
-  if (name === 'knockoutAdmin' && !section.classList.contains('hidden')) {
-    buildKOAdminUI();
-  }
-}
-
-function onResultChange() {
-  actualResults = getAllPredictions('r_');
-  saveResultsLocal();
-}
-
-function saveResults() {
-  actualResults = getAllPredictions('r_');
-  saveResultsLocal();
-  showToast(`${countFilled(actualResults)} uitslagen opgeslagen!`);
 }
 
 // --- Scoreboard ---
 function buildScoreboard() {
   const sb = document.getElementById('scoreboard');
-  const hasResults = Object.keys(actualResults).length > 0;
+  const players = poolData.players;
+  const results = poolData.results || {};
+  const hasResults = Object.keys(results).length > 0;
   const total = getTotalMatches();
+  const names = Object.keys(players);
 
-  if (poolPlayers.length === 0) {
+  if (names.length === 0) {
     sb.innerHTML = `<div class="scoreboard-card"><div class="scoreboard-header"><h3>Scorebord</h3></div>
-      <div style="padding:24px;text-align:center;color:var(--text-dim);">
-        Nog geen deelnemers. Ga naar <strong style="color:var(--accent);">Pool beheren</strong> om te starten.
-      </div></div>`;
+      <div style="padding:24px;text-align:center;color:var(--text-dim);">Nog geen deelnemers.</div></div>`;
     return;
   }
 
-  const scores = poolPlayers.map(p => {
-    const filled = countFilled(p.preds);
-    if (hasResults) {
-      const { points, exact, partial } = calculatePoints(p.preds, actualResults);
-      return { name: p.name, points, exact, partial, filled, preds: p.preds };
-    }
-    return { name: p.name, points: 0, exact: 0, partial: 0, filled, preds: p.preds };
+  const scores = names.map(uid => {
+    const p = players[uid];
+    const preds = p.preds || {};
+    const filled = Object.keys(preds).length;
+    const { points, exact, partial } = hasResults ? calculatePoints(preds, results) : {points:0,exact:0,partial:0};
+    return { uid, name: p.name || 'Anoniem', points, exact, partial, filled, preds };
   });
 
-  if (hasResults) scores.sort((a, b) => b.points - a.points || b.exact - a.exact);
-  else scores.sort((a, b) => b.filled - a.filled);
+  if (hasResults) scores.sort((a,b) => b.points - a.points || b.exact - a.exact);
+  else scores.sort((a,b) => b.filled - a.filled);
 
-  const resultsCount = countFilled(actualResults);
-  const statusText = hasResults ? `${resultsCount}/${total} uitslagen` : 'Nog geen uitslagen';
-  const koCount = countKODefined();
-  const koText = koCount > 0 ? ` | ${koCount} knockout` : '';
+  const rCount = Object.keys(results).length;
+  const statusText = hasResults ? `${rCount}/${total} uitslagen` : 'Nog geen uitslagen';
 
-  let html = `<div class="scoreboard-card">
-    <div class="scoreboard-header">
-      <h3>Scorebord</h3>
-      <span style="color:var(--text-dim);font-size:0.85em">${poolPlayers.length} deelnemers | ${statusText}${koText}</span>
-    </div>`;
+  let html = `<div class="scoreboard-card"><div class="scoreboard-header">
+    <h3>Scorebord</h3>
+    <span style="color:var(--text-dim);font-size:0.85em">${names.length} deelnemers | ${statusText}</span>
+  </div>`;
 
   scores.forEach((s, i) => {
-    const topClass = i === 0 && hasResults ? ' top1' : '';
-    html += `<div class="scoreboard-row clickable${topClass}" onclick="showPlayerDetail('${s.name.replace(/'/g, "\\'")}')">
-      <div class="rank">#${i + 1}</div>
-      <div class="name">${s.name}</div>
+    const top = i === 0 && hasResults ? ' top1' : '';
+    const me = s.uid === currentUser.uid ? ' (jij)' : '';
+    html += `<div class="scoreboard-row clickable${top}" onclick="showPlayerDetail('${s.uid}')">
+      <div class="rank">#${i+1}</div>
+      <div class="name">${s.name}${me}</div>
       <div class="filled-count">${s.filled}/${total}</div>
-      <div class="points">${hasResults ? s.points + ' pt' : '-'}</div>
+      <div class="points">${hasResults ? s.points+' pt' : '-'}</div>
     </div>`;
   });
 
-  if (!hasResults) {
-    html += `<div style="padding:16px 20px;text-align:center;color:var(--text-dim);font-size:0.85em;">
-      Punten worden berekend zodra uitslagen zijn ingevuld via "Pool beheren"
-    </div>`;
-  }
+  if (!hasResults) html += `<div style="padding:16px 20px;text-align:center;color:var(--text-dim);font-size:0.85em;">Punten verschijnen zodra de beheerder uitslagen invult</div>`;
   html += `</div>`;
   sb.innerHTML = html;
 }
 
-// --- Player detail modal ---
-function showPlayerDetail(playerName) {
-  const player = poolPlayers.find(p => p.name === playerName);
+// --- Player modal ---
+function showPlayerDetail(uid) {
+  const player = poolData.players[uid];
   if (!player) return;
-  const hasResults = Object.keys(actualResults).length > 0;
-  const { points, exact, partial } = hasResults ? calculatePoints(player.preds, actualResults) : { points: 0, exact: 0, partial: 0 };
+  const preds = player.preds || {};
+  const results = poolData.results || {};
+  const hasResults = Object.keys(results).length > 0;
+  const { points, exact, partial } = hasResults ? calculatePoints(preds, results) : {points:0,exact:0,partial:0};
 
-  let html = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">
-    <div class="modal">
-      <h3>${player.name} ${hasResults ? `<span style="color:var(--green)">${points} punten</span>` : ''}
-        <button class="modal-close" onclick="closeModal()">&times;</button>
-      </h3>`;
-  if (hasResults) {
-    html += `<p style="color:var(--text-dim);font-size:0.85em;margin-bottom:16px;">
-      ${exact} exact (3pt) | ${partial} juiste uitslag (1pt) | ${countFilled(player.preds)} ingevuld
-    </p>`;
-  }
+  let html = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()"><div class="modal">
+    <h3>${player.name} ${hasResults ? `<span style="color:var(--green)">${points} pt</span>`:''}<button class="modal-close" onclick="closeModal()">&times;</button></h3>`;
+  if (hasResults) html += `<p style="color:var(--text-dim);font-size:0.85em;margin-bottom:16px">${exact} exact | ${partial} juiste uitslag | ${Object.keys(preds).length} ingevuld</p>`;
 
-  // Groups
   for (const [letter, teams] of Object.entries(GROUPS)) {
-    const matches = getMatches(teams);
     html += `<div class="modal-group-header">Groep ${letter}</div>`;
-    matches.forEach((m, i) => {
+    getMatches(teams).forEach((m,i) => {
       const key = `${letter}_${i}`;
-      html += renderModalMatch(m[0], m[1], player.preds[key], actualResults[key], player.preds, key);
+      html += modalMatchHtml(m[0], m[1], preds[key], results[key], preds, key);
     });
   }
 
-  // Knockout
-  const defined = KO_ROUNDS.filter(r => knockoutDefs[r.id] && knockoutDefs[r.id].length > 0);
-  for (const round of defined) {
+  const kd = poolData.knockoutDefs;
+  for (const round of KO_ROUNDS) {
+    if (!kd[round.id]) continue;
+    const keys = Object.keys(kd[round.id]).sort((a,b)=>parseInt(a)-parseInt(b));
+    if (keys.length === 0) continue;
     html += `<div class="modal-group-header ko">${round.name}</div>`;
-    knockoutDefs[round.id].forEach((m, i) => {
-      const key = `${round.id}_${i}`;
-      html += renderModalMatch(m[0], m[1], player.preds[key], actualResults[key], player.preds, key);
-    });
+    for (const k of keys) {
+      const m = kd[round.id][k];
+      const key = `${round.id}_${k}`;
+      html += modalMatchHtml(m.home, m.away, preds[key], results[key], preds, key);
+    }
   }
-
   html += `</div></div>`;
   document.getElementById('modalRoot').innerHTML = html;
 }
 
-function renderModalMatch(home, away, pred, result, allPreds, key) {
-  let scoreClass = '';
-  if (pred && result) scoreClass = getMatchResult(allPreds, actualResults, key);
-  const predDisplay = pred || '-';
-  const resultDisplay = result ? ` (${result})` : '';
+function modalMatchHtml(home, away, pred, result, preds, key) {
+  let cls = '';
+  if (pred && result) cls = getMatchResult(preds, poolData.results, key);
   return `<div class="modal-match">
     <div class="team home" style="font-size:0.85em;justify-content:flex-end">${flag(home)} ${home}</div>
-    <div class="score ${scoreClass}">${predDisplay}${resultDisplay}</div>
+    <div class="score ${cls}">${pred||'-'}${result?' ('+result+')':''}</div>
     <div class="team away" style="font-size:0.85em">${away} ${flag(away)}</div>
   </div>`;
 }
 
 function closeModal() { document.getElementById('modalRoot').innerHTML = ''; }
 
+// --- Admin: Knockout defs ---
+function buildKOAdminUI() {
+  const container = document.getElementById('koRoundsAdmin');
+  const kd = poolData.knockoutDefs;
+  let html = '';
+  for (const round of KO_ROUNDS) {
+    const defs = kd[round.id] || {};
+    const count = Object.keys(defs).length;
+    const badge = count > 0 ? `<span class="ko-badge">${count}</span>` : `<span class="ko-badge empty">Leeg</span>`;
+    html += `<div class="ko-round-config"><div class="ko-round-header" onclick="document.getElementById('koBody_${round.id}').classList.toggle('hidden')">
+      <span>${round.name} (${round.count})</span>${badge}</div><div id="koBody_${round.id}" class="hidden">`;
+    for (let i = 0; i < round.count; i++) {
+      const d = defs[i] || {};
+      html += `<div class="ko-match-config">
+        <select id="ko_${round.id}_${i}_h"><option value="">-- Thuis --</option>${ALL_TEAMS.map(t=>`<option value="${t}" ${t===d.home?'selected':''}>${flag(t)} ${t}</option>`).join('')}</select>
+        <span class="vs">vs</span>
+        <select id="ko_${round.id}_${i}_a"><option value="">-- Uit --</option>${ALL_TEAMS.map(t=>`<option value="${t}" ${t===d.away?'selected':''}>${flag(t)} ${t}</option>`).join('')}</select>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+  container.innerHTML = html;
+}
+
+function saveKnockoutDefs() {
+  const kd = {};
+  for (const round of KO_ROUNDS) {
+    const matches = {};
+    for (let i = 0; i < round.count; i++) {
+      const hEl = document.getElementById(`ko_${round.id}_${i}_h`);
+      const aEl = document.getElementById(`ko_${round.id}_${i}_a`);
+      if (hEl && aEl && hEl.value && aEl.value) {
+        matches[i] = { home: hEl.value, away: aEl.value };
+      }
+    }
+    if (Object.keys(matches).length > 0) kd[round.id] = matches;
+  }
+  db.ref(`pools/${currentPoolId}/knockoutDefs`).set(kd)
+    .then(() => showToast('Knockout-rondes opgeslagen!'))
+    .catch(err => showToast('Fout: ' + err.message, true));
+}
+
+// --- Admin: Results ---
+function buildResultsUI() {
+  buildGroupUI('resultsContainer', 'r_', false);
+  buildKOResultsUI();
+  if (Object.keys(poolData.results).length > 0) {
+    setPredictions(poolData.results, 'r_');
+  }
+}
+
+function buildKOResultsUI() {
+  const container = document.getElementById('koResultsContainer');
+  const kd = poolData.knockoutDefs;
+  const defined = KO_ROUNDS.filter(r => kd[r.id] && Object.keys(kd[r.id]).length > 0);
+  if (defined.length === 0) { container.innerHTML = ''; return; }
+
+  let html = `<div class="section-divider"><div class="section-divider-inner">Knockout uitslagen</div></div><div class="groups-container" style="padding:12px 0">`;
+  for (const round of defined) {
+    const keys = Object.keys(kd[round.id]).sort((a,b)=>parseInt(a)-parseInt(b));
+    html += `<div class="group ko-round"><div class="group-header"><div class="group-letter">${round.id==='FI'?'F':round.id==='TP'?'T':round.id}</div>${round.name}</div>`;
+    for (const k of keys) {
+      const m = kd[round.id][k];
+      html += `<div class="match"><div class="team home"><span>${m.home}</span><span class="flag">${flag(m.home)}</span></div>
+        <div class="score-inputs">
+          <input type="number" min="0" max="20" id="r_${round.id}_${k}_h" oninput="this.value=this.value.slice(0,2)"><span>-</span>
+          <input type="number" min="0" max="20" id="r_${round.id}_${k}_a" oninput="this.value=this.value.slice(0,2)">
+        </div><div class="team away"><span class="flag">${flag(m.away)}</span><span>${m.away}</span></div></div>`;
+    }
+    html += `</div>`;
+  }
+  html += `</div>`;
+  container.innerHTML = html;
+  if (Object.keys(poolData.results).length > 0) setPredictions(poolData.results, 'r_');
+}
+
+function saveResultsToFirebase() {
+  const results = getAllPredictions('r_');
+  db.ref(`pools/${currentPoolId}/results`).set(results)
+    .then(() => showToast(`${Object.keys(results).length} uitslagen opgeslagen!`))
+    .catch(err => showToast('Fout: ' + err.message, true));
+}
+
 // --- Tab switching ---
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('predictView').classList.add('hidden');
   document.getElementById('scoresView').classList.add('hidden');
-  document.getElementById('poolView').classList.add('hidden');
-
-  const showEditUI = (tab === 'predict' && !isPoolView);
-  document.getElementById('editToolbar').style.display = showEditUI ? '' : 'none';
-  document.getElementById('lockedBanner').style.display = (tab === 'predict' && isLocked && !isPoolView) ? '' : 'none';
-  document.getElementById('infoBarEdit').style.display = (tab === 'predict') ? '' : 'none';
+  document.getElementById('adminView').classList.add('hidden');
 
   if (tab === 'predict') {
     document.getElementById('predictView').classList.remove('hidden');
@@ -1239,117 +939,73 @@ function switchTab(tab) {
     document.getElementById('scoresView').classList.remove('hidden');
     document.querySelectorAll('.tab')[1].classList.add('active');
     buildScoreboard();
-  } else if (tab === 'pool') {
-    document.getElementById('poolView').classList.remove('hidden');
+  } else if (tab === 'admin') {
+    document.getElementById('adminView').classList.remove('hidden');
     document.querySelectorAll('.tab')[2].classList.add('active');
-    renderPoolMembers();
   }
 }
 
-// --- Progress & filtering ---
-let currentFilter = 'all';
+// --- Toggle sections ---
+function toggleSection(name) {
+  const section = document.getElementById(name + 'Section');
+  const arrow = document.getElementById(name + 'Arrow');
+  section.classList.toggle('hidden');
+  arrow.classList.toggle('open');
+  if (name === 'knockout' && !section.classList.contains('hidden')) buildKOAdminUI();
+  if (name === 'results' && !section.classList.contains('hidden')) buildResultsUI();
+}
 
-function onScoreChange() { saveLocal(); updateProgress(); applyFilter(); }
-
+// --- Progress ---
 function updateProgress() {
   let total = 0, filled = 0;
-  const groupCounts = {};
-
-  // Groups
   for (const [letter, teams] of Object.entries(GROUPS)) {
     const matches = getMatches(teams);
-    groupCounts[letter] = { total: matches.length, filled: 0 };
-    matches.forEach((m, i) => {
+    let gf = 0;
+    matches.forEach((m,i) => {
       total++;
       const hEl = document.getElementById(`${letter}_${i}_h`);
       const aEl = document.getElementById(`${letter}_${i}_a`);
       const matchEl = document.getElementById(`match_${letter}_${i}`);
-      if (!hEl || !aEl || !matchEl) return;
-      if (hEl.value !== '' && aEl.value !== '') {
-        filled++; groupCounts[letter].filled++;
-        matchEl.classList.add('filled');
-      } else { matchEl.classList.remove('filled'); }
+      if (!hEl||!aEl||!matchEl) return;
+      if (hEl.value!=='' && aEl.value!=='') { filled++; gf++; matchEl.classList.add('filled'); }
+      else { matchEl.classList.remove('filled'); }
     });
+    const gc = document.getElementById(`gc_${letter}`);
+    if (gc) { gc.textContent = `${gf}/6`; gc.classList.toggle('complete', gf===6); }
   }
-
-  // Knockout
+  const kd = poolData.knockoutDefs;
   for (const round of KO_ROUNDS) {
-    const defs = knockoutDefs[round.id];
-    if (!defs) continue;
-    let koFilled = 0;
-    defs.forEach((m, i) => {
+    if (!kd[round.id]) continue;
+    const keys = Object.keys(kd[round.id]);
+    let kf = 0;
+    for (const k of keys) {
       total++;
-      const hEl = document.getElementById(`${round.id}_${i}_h`);
-      const aEl = document.getElementById(`${round.id}_${i}_a`);
-      const matchEl = document.getElementById(`match_${round.id}_${i}`);
-      if (!hEl || !aEl || !matchEl) return;
-      if (hEl.value !== '' && aEl.value !== '') {
-        filled++; koFilled++;
-        matchEl.classList.add('filled');
-      } else { matchEl.classList.remove('filled'); }
-    });
-    const gcEl = document.getElementById(`gc_ko_${round.id}`);
-    if (gcEl) {
-      gcEl.textContent = `${koFilled}/${defs.length}`;
-      gcEl.classList.toggle('complete', koFilled === defs.length);
+      const hEl = document.getElementById(`${round.id}_${k}_h`);
+      const aEl = document.getElementById(`${round.id}_${k}_a`);
+      const matchEl = document.getElementById(`match_${round.id}_${k}`);
+      if (!hEl||!aEl||!matchEl) continue;
+      if (hEl.value!=='' && aEl.value!=='') { filled++; kf++; matchEl.classList.add('filled'); }
+      else { matchEl.classList.remove('filled'); }
     }
+    const gc = document.getElementById(`gc_ko_${round.id}`);
+    if (gc) { gc.textContent = `${kf}/${keys.length}`; gc.classList.toggle('complete', kf===keys.length); }
   }
-
-  const pct = total > 0 ? Math.round((filled / total) * 100) : 0;
+  const pct = total > 0 ? Math.round((filled/total)*100) : 0;
   const bar = document.getElementById('progressBar');
   const label = document.getElementById('progressLabel');
   const pctEl = document.getElementById('progressPct');
-  if (bar) bar.style.width = pct + '%';
-  if (label) label.innerHTML = `<span class="count">${filled}</span> / ${total} wedstrijden ingevuld`;
-  if (pctEl) pctEl.textContent = pct + '%';
-
-  for (const [letter, c] of Object.entries(groupCounts)) {
-    const el = document.getElementById(`gc_${letter}`);
-    if (el) {
-      el.textContent = `${c.filled}/${c.total}`;
-      el.classList.toggle('complete', c.filled === c.total);
-    }
-  }
+  if (bar) bar.style.width = pct+'%';
+  if (label) label.innerHTML = `<span class="count">${filled}</span> / ${total} ingevuld`;
+  if (pctEl) pctEl.textContent = pct+'%';
 }
 
-function setFilter(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  applyFilter();
+// --- Copy helpers ---
+function copyPoolCode() {
+  navigator.clipboard.writeText(currentPoolId).then(() => showToast('Code gekopieerd!')).catch(() => {});
 }
-
-function applyFilter() {
-  // Groups
-  const groupCards = document.querySelectorAll('#groupsContainer .group');
-  const groupKeys = Object.keys(GROUPS);
-  for (const [letter, teams] of Object.entries(GROUPS)) {
-    const matches = getMatches(teams);
-    let groupVisible = false;
-    matches.forEach((m, i) => {
-      const matchEl = document.getElementById(`match_${letter}_${i}`);
-      if (!matchEl) return;
-      const isFilled = matchEl.classList.contains('filled');
-      let show = currentFilter === 'all' || (currentFilter === 'filled' && isFilled) || (currentFilter === 'empty' && !isFilled);
-      matchEl.style.display = show ? '' : 'none';
-      if (show) groupVisible = true;
-    });
-    const groupIdx = groupKeys.indexOf(letter);
-    if (groupCards[groupIdx]) groupCards[groupIdx].style.display = groupVisible ? '' : 'none';
-  }
-
-  // Knockout
-  const koGroups = document.querySelectorAll('#koSectionPredict .group');
-  koGroups.forEach(g => {
-    let visible = false;
-    g.querySelectorAll('.match').forEach(matchEl => {
-      const isFilled = matchEl.classList.contains('filled');
-      let show = currentFilter === 'all' || (currentFilter === 'filled' && isFilled) || (currentFilter === 'empty' && !isFilled);
-      matchEl.style.display = show ? '' : 'none';
-      if (show) visible = true;
-    });
-    g.style.display = visible ? '' : 'none';
-  });
+function copyPoolUrl() {
+  const url = window.location.origin + window.location.pathname + '#' + currentPoolId;
+  navigator.clipboard.writeText(url).then(() => showToast('Link gekopieerd!')).catch(() => {});
 }
 
 function showToast(msg, isError) {
@@ -1361,22 +1017,6 @@ function showToast(msg, isError) {
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-// --- Init ---
-buildGroupUI('groupsContainer', '', false);
-loadPoolLocal();
-loadResultsLocal();
-loadKOLocal();
-buildKOPredictUI();
-
-const fromHash = loadFromHash();
-if (!fromHash) {
-  loadLocal();
-  updateProgress();
-  if (localStorage.getItem('wkpool2026_locked') === '1') lockPredictions();
-} else if (!isPoolView) {
-  updateProgress();
-}
 </script>
 </body>
 </html>
