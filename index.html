@@ -511,12 +511,8 @@ function createPool() {
   const name = prompt('Naam van de pool:', 'WK Pool 2026');
   if (!name) return;
 
-  const poolRef = db.ref('pools/' + code);
-  poolRef.set({
-    config: { admin: currentUser.uid, name: name, created: Date.now() },
-    players: {},
-    results: {},
-    knockoutDefs: {}
+  db.ref('pools/' + code + '/config').set({
+    admin: currentUser.uid, name: name, created: Date.now()
   }).then(() => {
     document.getElementById('poolCodeInput').value = code;
     joinPool();
