@@ -371,9 +371,11 @@
 
       <div class="admin-card">
         <h3>Uitslagen automatisch ophalen</h3>
-        <p>Haal de echte uitslagen op via de Football-Data API. Gratis API key nodig van <a href="https://www.football-data.org/client/register" target="_blank" style="color:var(--accent)">football-data.org</a>.</p>
+        <p>Haal de echte uitslagen op via de Football-Data API.<br>
+        <strong style="color:var(--accent)">Optie 1:</strong> Klik hieronder (werkt alleen lokaal / localhost).<br>
+        <strong style="color:var(--accent)">Optie 2:</strong> Draai in je terminal: <code style="background:var(--input-bg);padding:2px 6px;border-radius:4px;font-size:0.85em">bash fetch-wk-results.sh ${currentPoolId || 'POOLCODE'}</code></p>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <input type="text" id="apiKeyInput" placeholder="API key..." style="flex:1;min-width:200px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:monospace;font-size:0.85em">
+          <input type="text" id="apiKeyInput" placeholder="API key van football-data.org..." style="flex:1;min-width:200px;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-family:monospace;font-size:0.85em">
           <button class="btn" onclick="fetchResults()">Uitslagen ophalen</button>
         </div>
         <div id="fetchStatus" style="margin-top:10px;font-size:0.85em;color:var(--text-dim)"></div>
@@ -806,7 +808,7 @@ async function fetchResults() {
 
   try {
     const apiUrl = 'https://api.football-data.org/v4/competitions/WC/matches?status=FINISHED';
-    const resp = await fetch('https://corsproxy.io/?' + encodeURIComponent(apiUrl), {
+    const resp = await fetch(apiUrl, {
       headers: { 'X-Auth-Token': apiKey }
     });
 
@@ -826,7 +828,12 @@ async function fetchResults() {
     const data = await resp.json();
     processApiResults(data.matches || [], statusEl);
   } catch (err) {
-    statusEl.innerHTML = `<span style="color:var(--red)">Verbindingsfout: ${err.message}</span>`;
+    if (err.message.includes('NetworkError') || err.name === 'TypeError') {
+      statusEl.innerHTML = `<span style="color:var(--accent)">CORS-blokkade: de API werkt alleen lokaal (localhost) of via het terminal-script.<br>
+      Draai in je terminal: <code style="background:var(--input-bg);padding:2px 6px;border-radius:4px">bash fetch-wk-results.sh ${currentPoolId} ${apiKey}</code></span>`;
+    } else {
+      statusEl.innerHTML = `<span style="color:var(--red)">Fout: ${err.message}</span>`;
+    }
   }
 }
 
@@ -835,7 +842,7 @@ async function fetchResultsAlt(apiKey) {
   try {
     // Try fetching all competitions to find World Cup 2026
     const apiUrl2 = 'https://api.football-data.org/v4/competitions/2000/matches?status=FINISHED';
-    const resp = await fetch('https://corsproxy.io/?' + encodeURIComponent(apiUrl2), {
+    const resp = await fetch(apiUrl2, {
       headers: { 'X-Auth-Token': apiKey }
     });
     if (!resp.ok) {
