@@ -142,6 +142,10 @@
   }
   .match-time .countdown { color: var(--accent); font-weight: 600; }
   .match-time .started { color: var(--red); }
+  .match-locked .score-inputs input {
+    pointer-events: none; opacity: 0.6; background: transparent; border-color: rgba(37,58,90,0.3);
+  }
+  .match-locked { opacity: 0.7; }
   .group-count { margin-left: auto; font-size: 0.8em; color: var(--text-dim); font-weight: 600; }
   .group-count.complete { color: var(--green); }
 
@@ -710,13 +714,15 @@ function buildGroupUI(containerId, prefix, readonly) {
       const timeStr = mt ? formatMatchTime(mt) : '';
       const countdown = mt ? timeUntil(mt) : '';
       const isStarted = countdown === 'gestart';
-      const timeHtml = (mt && !prefix) ? `<div class="match-time">${timeStr} &mdash; <span class="${isStarted?'started':'countdown'}">${countdown}</span></div>` : '';
-      html += `<div class="match" id="${prefix}match_${letter}_${i}">
+      const matchLocked = isStarted && !prefix;
+      const inputLocked = readonly || matchLocked;
+      const timeHtml = (mt && !prefix) ? `<div class="match-time">${timeStr} &mdash; <span class="${isStarted?'started':'countdown'}">${isStarted?'vergrendeld':countdown}</span></div>` : '';
+      html += `<div class="match${matchLocked?' match-locked':''}" id="${prefix}match_${letter}_${i}">
         <div class="team home"><span>${m[0]}</span><span class="flag">${flag(m[0])}</span></div>
         <div class="score-inputs">
-          <input type="number" min="0" max="20" id="${id}_h" oninput="this.value=this.value.slice(0,2);${handler}" ${readonly?'readonly':''}>
+          <input type="number" min="0" max="20" id="${id}_h" oninput="this.value=this.value.slice(0,2);${handler}" ${inputLocked?'readonly':''}>
           <span>-</span>
-          <input type="number" min="0" max="20" id="${id}_a" oninput="this.value=this.value.slice(0,2);${handler}" ${readonly?'readonly':''}>
+          <input type="number" min="0" max="20" id="${id}_a" oninput="this.value=this.value.slice(0,2);${handler}" ${inputLocked?'readonly':''}>
           <span class="check">&#10003;</span>
         </div>
         <div class="team away"><span class="flag">${flag(m[1])}</span><span>${m[1]}</span></div>
@@ -813,7 +819,21 @@ function savePredictions() {
   if (!currentUser || !currentPoolId) return;
   if (isDeadlinePassed()) { showToast('Deadline is verstreken!', true); return; }
   const name = document.getElementById('playerName').value.trim() || 'Anoniem';
+
+  // Get all predictions but keep existing ones for locked matches
   const preds = getAllPredictions();
+  const myData = poolData.players[currentUser.uid];
+  const now = Date.now();
+
+  // Preserve predictions for matches that have already started (can't modify via UI anyway)
+  if (myData && myData.preds) {
+    for (const [key, val] of Object.entries(myData.preds)) {
+      const mt = getMatchTime(key);
+      if (mt && now >= mt.getTime()) {
+        preds[key] = val; // Keep original prediction for started matches
+      }
+    }
+  }
   localStorage.setItem('wkpool_name', name);
 
   db.ref(`pools/${currentPoolId}/players/${currentUser.uid}`).set({
@@ -1281,8 +1301,40 @@ function clearDeadline() {
     .catch(err => showToast('Fout: ' + err.message, true));
 }
 
-// Update countdown every minute
-setInterval(() => { if (currentPoolId) updateDeadlineUI(); }, 60000);
+// --- Per-match auto-lock ---
+function updateMatchLocks() {
+  const now = Date.now();
+  for (const [letter, teams] of Object.entries(GROUPS)) {
+    getMatches(teams).forEach((m, i) => {
+      const key = `${letter}_${i}`;
+      const mt = getMatchTime(key);
+      if (!mt) return;
+      const hEl = document.getElementById(`${key}_h`);
+      const aEl = document.getElementById(`${key}_a`);
+      const matchEl = document.getElementById(`match_${key}`);
+      if (!hEl || !aEl || !matchEl) return;
+
+      if (now >= mt.getTime()) {
+        hEl.readOnly = true;
+        aEl.readOnly = true;
+        matchEl.classList.add('match-locked');
+      }
+    });
+  }
+}
+
+// Update locks and countdowns every minute
+setInterval(() => {
+  if (currentPoolId) {
+    updateDeadlineUI();
+    updateMatchLocks();
+    // Refresh time displays
+    buildGroupUI('groupsContainer');
+    const myData = poolData.players[currentUser?.uid];
+    if (myData && myData.preds) setPredictions(myData.preds);
+    updateProgress();
+  }
+}, 60000);
 
 // --- Progress ---
 function updateProgress() {
