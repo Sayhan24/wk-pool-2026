@@ -555,16 +555,28 @@ function formatMatchTime(date) {
          date.toLocaleTimeString('nl-NL', {hour:'2-digit', minute:'2-digit'});
 }
 
-function timeUntil(date) {
+function getNextMatchKey() {
+  const now = Date.now();
+  let closest = null, closestDiff = Infinity;
+  for (const [key, iso] of Object.entries(MATCH_TIMES)) {
+    const diff = new Date(iso).getTime() - now;
+    if (diff > 0 && diff < closestDiff) { closestDiff = diff; closest = key; }
+  }
+  return closest;
+}
+
+function timeUntil(date, showSeconds) {
   if (!date) return '';
   const diff = date.getTime() - Date.now();
   if (diff <= 0) return 'gestart';
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor((diff % 86400000) / 3600000);
   const mins = Math.floor((diff % 3600000) / 60000);
-  if (days > 0) return `nog ${days}d ${hours}u`;
+  const secs = Math.floor((diff % 60000) / 1000);
+  if (days > 0) return `nog ${days}d ${hours}u ${mins}m`;
+  if (showSeconds) return `nog ${hours}u ${mins}m ${secs}s`;
   if (hours > 0) return `nog ${hours}u ${mins}m`;
-  return `nog ${mins}m`;
+  return `nog ${mins}m ${secs}s`;
 }
 
 function getMatches(teams) {
@@ -712,7 +724,9 @@ function buildGroupUI(containerId, prefix, readonly) {
       const matchKey = `${letter}_${i}`;
       const mt = prefix ? null : getMatchTime(matchKey);
       const timeStr = mt ? formatMatchTime(mt) : '';
-      const countdown = mt ? timeUntil(mt) : '';
+      const nextKey = getNextMatchKey();
+      const isNext = matchKey === nextKey;
+      const countdown = mt ? timeUntil(mt, isNext) : '';
       const isStarted = countdown === 'gestart';
       const matchLocked = isStarted && !prefix;
       const inputLocked = readonly || matchLocked;
@@ -1323,18 +1337,43 @@ function updateMatchLocks() {
   }
 }
 
-// Update locks and countdowns every minute
+// Update next match countdown every second, full refresh every minute
+let tickCount = 0;
 setInterval(() => {
-  if (currentPoolId) {
+  if (!currentPoolId) return;
+  tickCount++;
+
+  // Every second: update only the next match countdown
+  const nextKey = getNextMatchKey();
+  if (nextKey) {
+    const mt = getMatchTime(nextKey);
+    const el = document.getElementById(`match_${nextKey}`);
+    if (el && mt) {
+      const timeDiv = el.querySelector('.match-time');
+      if (timeDiv) {
+        const countdown = timeUntil(mt, true);
+        const isStarted = countdown === 'gestart';
+        timeDiv.innerHTML = `${formatMatchTime(mt)} &mdash; <span class="${isStarted?'started':'countdown'}">${isStarted?'vergrendeld':countdown}</span>`;
+        if (isStarted) {
+          el.classList.add('match-locked');
+          const inputs = el.querySelectorAll('input');
+          inputs.forEach(inp => inp.readOnly = true);
+        }
+      }
+    }
+  }
+
+  // Every 60 seconds: full refresh
+  if (tickCount >= 60) {
+    tickCount = 0;
     updateDeadlineUI();
     updateMatchLocks();
-    // Refresh time displays
     buildGroupUI('groupsContainer');
     const myData = poolData.players[currentUser?.uid];
     if (myData && myData.preds) setPredictions(myData.preds);
     updateProgress();
   }
-}, 60000);
+}, 1000);
 
 // --- Progress ---
 function updateProgress() {
