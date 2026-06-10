@@ -1,0 +1,23 @@
+{
+  "rules": {
+    "pools": {
+      "$poolId": {
+        ".read": true,
+        "config": {
+          ".write": "auth != null && (!data.exists() || data.child('admin').val() === auth.uid)"
+        },
+        "knockoutDefs": {
+          ".write": "auth != null"
+        },
+        "results": {
+          ".write": true
+        },
+        "players": {
+          "$playerId": {
+            ".write": "auth != null && ($playerId === auth.uid || root.child('pools/' + $poolId + '/config/admin').val() === auth.uid)"
+          }
+        }
+      }
+    }
+  }
+}

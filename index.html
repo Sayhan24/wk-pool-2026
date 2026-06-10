@@ -384,6 +384,12 @@
       </div>
 
       <div class="admin-card">
+        <h3>Deelnemers beheren</h3>
+        <p>Verwijder deelnemers die niet meer meedoen of dubbel staan.</p>
+        <div id="adminPlayersList"></div>
+      </div>
+
+      <div class="admin-card">
         <h3>Deadline</h3>
         <p>Na de deadline kunnen deelnemers hun voorspellingen niet meer wijzigen.</p>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -1308,6 +1314,7 @@ function toggleSection(name) {
 function initAdminView() {
   const savedKey = localStorage.getItem('wkpool_apikey');
   if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
+  renderAdminPlayers();
 
   // Load deadline
   const dl = poolData.config.deadline;
@@ -1316,6 +1323,39 @@ function initAdminView() {
     document.getElementById('deadlineInput').value = d.toISOString().slice(0, 16);
     document.getElementById('deadlineStatus').innerHTML = `Deadline: <strong style="color:var(--accent)">${d.toLocaleString('nl-NL')}</strong>`;
   }
+}
+
+// --- Admin: player management ---
+function renderAdminPlayers() {
+  const container = document.getElementById('adminPlayersList');
+  const players = poolData.players || {};
+  const uids = Object.keys(players);
+
+  if (uids.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-dim)">Nog geen deelnemers.</p>';
+    return;
+  }
+
+  container.innerHTML = uids.map(uid => {
+    const p = players[uid];
+    const filled = p.preds ? Object.keys(p.preds).length : 0;
+    const isMe = uid === currentUser?.uid;
+    const updated = p.updated ? new Date(p.updated).toLocaleString('nl-NL') : '-';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
+      <div>
+        <strong>${p.name || 'Anoniem'}</strong>${isMe ? ' (jij)' : ''}
+        <span style="color:var(--text-dim);font-size:0.8em;margin-left:8px">${filled} ingevuld | ${updated}</span>
+      </div>
+      ${isMe ? '' : `<button class="btn btn-sm" style="background:var(--red);color:#fff" onclick="deletePlayer('${uid}','${(p.name||'').replace(/'/g,"\\'")}')">Verwijder</button>`}
+    </div>`;
+  }).join('');
+}
+
+function deletePlayer(uid, name) {
+  if (!confirm(`Weet je zeker dat je "${name}" wilt verwijderen?\n\nAlle voorspellingen van deze persoon worden gewist.`)) return;
+  db.ref(`pools/${currentPoolId}/players/${uid}`).remove()
+    .then(() => showToast(`${name} verwijderd`))
+    .catch(err => showToast('Fout: ' + err.message, true));
 }
 
 // --- Deadline ---
