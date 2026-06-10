@@ -342,6 +342,8 @@
   <div class="toolbar">
     <input type="text" id="playerName" placeholder="Jouw naam..." maxlength="30" onchange="onNameChange()">
     <button class="btn btn-sm" id="btnSave" onclick="savePredictions()">Opslaan</button>
+    <button class="btn btn-sm btn-secondary" onclick="showMyPin()" title="Toon je code voor ander apparaat">Mijn code</button>
+    <button class="btn btn-sm btn-secondary" onclick="recoverAccount()" title="Voorspellingen overnemen van ander apparaat">Ander apparaat</button>
   </div>
 
   <div class="tabs">
@@ -827,41 +829,51 @@ function onScoreInput() {
 function onNameChange() {
   const name = document.getElementById('playerName').value.trim();
   if (name) localStorage.setItem('wkpool_name', name);
-  checkExistingPlayer(name);
 }
 
-// Check if a player with this name already exists under a different UID
-function checkExistingPlayer(name) {
-  if (!name || !currentUser || !poolData.players) return;
+// --- Device transfer via PIN ---
+function recoverAccount() {
+  const name = prompt('Vul je naam in:');
+  if (!name) return;
+  const pin = prompt('Vul je 4-cijferige code in:');
+  if (!pin) return;
+
+  // Find matching player
   for (const [uid, data] of Object.entries(poolData.players)) {
-    if (uid !== currentUser.uid && data.name === name && data.preds && Object.keys(data.preds).length > 0) {
-      if (confirm(`"${name}" heeft al voorspellingen ingevuld op een ander apparaat.\n\nWil je die voorspellingen overnemen op dit apparaat?`)) {
-        claimPlayer(uid, data);
-      }
+    if (uid !== currentUser.uid && data.name === name && data.pin === pin) {
+      // Transfer to current UID
+      db.ref(`pools/${currentPoolId}/players/${currentUser.uid}`).set({
+        name: data.name,
+        preds: data.preds || {},
+        pin: data.pin,
+        updated: Date.now()
+      }).then(() => {
+        // Remove old entry
+        db.ref(`pools/${currentPoolId}/players/${uid}`).remove().catch(() => {});
+        localStorage.setItem('wkpool_name', name);
+        localStorage.setItem('wkpool_pin', pin);
+        document.getElementById('playerName').value = name;
+        showToast('Voorspellingen overgenomen!');
+      }).catch(err => showToast('Fout: ' + err.message, true));
       return;
     }
   }
+  showToast('Geen match gevonden. Controleer naam en code.', true);
 }
 
-// Transfer predictions from old UID to current UID
-function claimPlayer(oldUid, oldData) {
-  const updates = {};
-  updates[`pools/${currentPoolId}/players/${currentUser.uid}`] = {
-    name: oldData.name,
-    preds: oldData.preds,
-    updated: Date.now()
-  };
-  updates[`pools/${currentPoolId}/players/${oldUid}`] = null; // remove old entry
+function getOrCreatePin() {
+  let pin = localStorage.getItem('wkpool_pin');
+  if (!pin) {
+    pin = String(Math.floor(1000 + Math.random() * 9000)); // 4 digits
+    localStorage.setItem('wkpool_pin', pin);
+  }
+  return pin;
+}
 
-  db.ref().update(updates).then(() => {
-    showToast('Voorspellingen overgenomen!');
-  }).catch(err => {
-    // If delete fails (permission), just copy
-    db.ref(`pools/${currentPoolId}/players/${currentUser.uid}`).set({
-      name: oldData.name, preds: oldData.preds, updated: Date.now()
-    }).then(() => showToast('Voorspellingen gekopieerd!'))
-    .catch(e => showToast('Fout: ' + e.message, true));
-  });
+function showMyPin() {
+  const myData = poolData.players[currentUser?.uid];
+  const pin = myData?.pin || localStorage.getItem('wkpool_pin') || '----';
+  alert(`Je persoonlijke code is: ${pin}\n\nBewaar deze code! Hiermee kun je je voorspellingen overnemen op een ander apparaat via "Ander apparaat".`);
 }
 
 function savePredictions() {
@@ -885,13 +897,20 @@ function savePredictions() {
   }
   localStorage.setItem('wkpool_name', name);
 
+  const pin = getOrCreatePin();
   db.ref(`pools/${currentPoolId}/players/${currentUser.uid}`).set({
     name: name,
     preds: preds,
+    pin: pin,
     updated: Date.now()
   }).then(() => {
     document.getElementById('btnSave').textContent = 'Opgeslagen!';
     setTimeout(() => { document.getElementById('btnSave').textContent = 'Opslaan'; }, 1500);
+    // Show PIN on first save
+    if (!localStorage.getItem('wkpool_pin_shown')) {
+      localStorage.setItem('wkpool_pin_shown', '1');
+      setTimeout(() => alert(`Je persoonlijke code is: ${pin}\n\nBewaar deze code! Hiermee kun je je voorspellingen overnemen op een ander apparaat.`), 500);
+    }
   }).catch(err => {
     showToast('Opslaan mislukt: ' + err.message, true);
     document.getElementById('btnSave').textContent = 'Opslaan';
