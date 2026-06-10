@@ -136,6 +136,12 @@
   .match.filled { border-left: 3px solid var(--green); }
   .match .check { font-size: 0.8em; margin-left: 2px; opacity: 0; transition: opacity 0.3s; }
   .match.filled .check { opacity: 1; }
+  .match-time {
+    grid-column: 1 / -1; text-align: center; font-size: 0.75em; color: var(--text-dim);
+    padding: 0 16px 4px; margin-top: -4px;
+  }
+  .match-time .countdown { color: var(--accent); font-weight: 600; }
+  .match-time .started { color: var(--red); }
   .group-count { margin-left: auto; font-size: 0.8em; color: var(--text-dim); font-weight: 600; }
   .group-count.complete { color: var(--green); }
 
@@ -259,6 +265,20 @@
   .status-dot.saving { background: var(--accent); animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
+  /* Deadline banner */
+  .deadline-banner {
+    text-align: center; padding: 10px 20px; font-size: 0.9em; font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  .deadline-banner.open { background: rgba(46,204,113,0.1); color: var(--green); }
+  .deadline-banner.closed { background: rgba(231,76,60,0.15); color: var(--red); }
+  .deadline-banner .countdown { color: var(--accent); }
+
+  .predictions-locked .score-inputs input {
+    pointer-events: none; opacity: 0.6; background: transparent; border-color: rgba(37,58,90,0.3);
+  }
+  .predictions-locked #btnSave { display: none; }
+
   .toast {
     position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
     background: var(--green); color: #fff; padding: 12px 28px; border-radius: 8px;
@@ -330,6 +350,8 @@
     Puntentelling: <strong>3 punten</strong> exacte score &bull; <strong>1 punt</strong> juiste uitslag (winst/gelijk/verlies)
   </div>
 
+  <div id="deadlineBanner" class="deadline-banner hidden"></div>
+
   <div id="predictView">
     <div class="progress-section">
       <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
@@ -353,6 +375,17 @@
           <button class="btn btn-sm" onclick="copyPoolCode()">Kopieer code</button>
           <button class="btn btn-sm btn-secondary" onclick="copyPoolUrl()">Kopieer link</button>
         </div>
+      </div>
+
+      <div class="admin-card">
+        <h3>Deadline</h3>
+        <p>Na de deadline kunnen deelnemers hun voorspellingen niet meer wijzigen.</p>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="datetime-local" id="deadlineInput" style="background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;font-size:0.95em">
+          <button class="btn btn-sm" onclick="saveDeadline()">Deadline opslaan</button>
+          <button class="btn btn-sm btn-secondary" onclick="clearDeadline()">Verwijderen</button>
+        </div>
+        <div id="deadlineStatus" style="margin-top:8px;font-size:0.85em;color:var(--text-dim)"></div>
       </div>
 
       <div class="admin-card">
@@ -471,6 +504,64 @@ const KO_ROUNDS = [
   {id:'TP',name:'Troostfinale',count:1},
   {id:'FI',name:'Finale',count:1}
 ];
+
+// Match schedule: key = "GROUP_matchIndex", value = kickoff time (UTC)
+// Bron: FIFA World Cup 2026 officieel speelschema
+const MATCH_TIMES = {
+  // Speeldag 1 - 11 juni
+  'A_0':'2026-06-11T18:00Z', // Mexico vs South Africa (opening)
+  // Speeldag 1 - 12 juni
+  'D_0':'2026-06-12T13:00Z','C_0':'2026-06-12T16:00Z','B_0':'2026-06-12T19:00Z','A_1':'2026-06-12T22:00Z',
+  // Speeldag 1 - 13 juni
+  'E_0':'2026-06-13T13:00Z','F_0':'2026-06-13T16:00Z','D_1':'2026-06-13T19:00Z','G_0':'2026-06-13T22:00Z',
+  // Speeldag 1 - 14 juni
+  'H_0':'2026-06-14T13:00Z','E_1':'2026-06-14T16:00Z','F_1':'2026-06-14T19:00Z','H_1':'2026-06-14T22:00Z',
+  // Speeldag 1 - 15 juni
+  'I_0':'2026-06-15T13:00Z','G_1':'2026-06-15T16:00Z','J_0':'2026-06-15T19:00Z','I_1':'2026-06-15T22:00Z',
+  // Speeldag 1 - 16 juni
+  'K_0':'2026-06-16T13:00Z','L_0':'2026-06-16T16:00Z','J_1':'2026-06-16T19:00Z','K_1':'2026-06-16T22:00Z',
+  // Speeldag 1 - 17 juni
+  'L_1':'2026-06-17T16:00Z',
+  // Speeldag 2 - 17-22 juni
+  'A_2':'2026-06-17T19:00Z','B_1':'2026-06-17T22:00Z',
+  'A_3':'2026-06-18T13:00Z','C_1':'2026-06-18T16:00Z','B_2':'2026-06-18T19:00Z','D_2':'2026-06-18T22:00Z',
+  'C_2':'2026-06-19T13:00Z','E_2':'2026-06-19T16:00Z','D_3':'2026-06-19T19:00Z','F_2':'2026-06-19T22:00Z',
+  'E_3':'2026-06-20T13:00Z','G_2':'2026-06-20T16:00Z','F_3':'2026-06-20T19:00Z','H_2':'2026-06-20T22:00Z',
+  'G_3':'2026-06-21T13:00Z','I_2':'2026-06-21T16:00Z','H_3':'2026-06-21T19:00Z','J_2':'2026-06-21T22:00Z',
+  'I_3':'2026-06-22T13:00Z','K_2':'2026-06-22T16:00Z','J_3':'2026-06-22T19:00Z','L_2':'2026-06-22T22:00Z',
+  // Speeldag 3 - 23-28 juni
+  'K_3':'2026-06-23T16:00Z','L_3':'2026-06-23T19:00Z',
+  'A_4':'2026-06-24T16:00Z','A_5':'2026-06-24T16:00Z','B_3':'2026-06-24T20:00Z','B_4':'2026-06-24T20:00Z',
+  'C_3':'2026-06-25T16:00Z','C_4':'2026-06-25T16:00Z','D_4':'2026-06-25T20:00Z','D_5':'2026-06-25T20:00Z',
+  'E_4':'2026-06-26T16:00Z','E_5':'2026-06-26T16:00Z','F_4':'2026-06-26T20:00Z','F_5':'2026-06-26T20:00Z',
+  'G_4':'2026-06-27T16:00Z','G_5':'2026-06-27T16:00Z','H_4':'2026-06-27T20:00Z','H_5':'2026-06-27T20:00Z',
+  'I_4':'2026-06-28T16:00Z','I_5':'2026-06-28T16:00Z','J_4':'2026-06-28T20:00Z','J_5':'2026-06-28T20:00Z',
+  'K_4':'2026-06-29T16:00Z','K_5':'2026-06-29T16:00Z','L_4':'2026-06-29T20:00Z','L_5':'2026-06-29T20:00Z',
+  // Ontbrekende speeldag 2 wedstrijden
+  'B_5':'2026-06-24T20:00Z','C_5':'2026-06-25T16:00Z',
+};
+
+function getMatchTime(key) {
+  return MATCH_TIMES[key] ? new Date(MATCH_TIMES[key]) : null;
+}
+
+function formatMatchTime(date) {
+  if (!date) return '';
+  return date.toLocaleDateString('nl-NL', {weekday:'short', day:'numeric', month:'short'}) + ' ' +
+         date.toLocaleTimeString('nl-NL', {hour:'2-digit', minute:'2-digit'});
+}
+
+function timeUntil(date) {
+  if (!date) return '';
+  const diff = date.getTime() - Date.now();
+  if (diff <= 0) return 'gestart';
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  if (days > 0) return `nog ${days}d ${hours}u`;
+  if (hours > 0) return `nog ${hours}u ${mins}m`;
+  return `nog ${mins}m`;
+}
 
 function getMatches(teams) {
   const m = [];
@@ -594,6 +685,7 @@ function enterPool() {
     buildKOPredictUI();
     if (myData && myData.preds) setPredictions(myData.preds); // re-set for KO fields
     updateProgress();
+    updateDeadlineUI();
     if (document.getElementById('scoresView').classList.contains('hidden') === false) {
       buildScoreboard();
     }
@@ -613,6 +705,12 @@ function buildGroupUI(containerId, prefix, readonly) {
     let html = `<div class="group-header"><div class="group-letter">${letter}</div>Groep ${letter}<span class="group-count" id="${prefix}gc_${letter}">0/6</span></div>`;
     matches.forEach((m, i) => {
       const id = `${prefix}${letter}_${i}`;
+      const matchKey = `${letter}_${i}`;
+      const mt = prefix ? null : getMatchTime(matchKey);
+      const timeStr = mt ? formatMatchTime(mt) : '';
+      const countdown = mt ? timeUntil(mt) : '';
+      const isStarted = countdown === 'gestart';
+      const timeHtml = (mt && !prefix) ? `<div class="match-time">${timeStr} &mdash; <span class="${isStarted?'started':'countdown'}">${countdown}</span></div>` : '';
       html += `<div class="match" id="${prefix}match_${letter}_${i}">
         <div class="team home"><span>${m[0]}</span><span class="flag">${flag(m[0])}</span></div>
         <div class="score-inputs">
@@ -622,6 +720,7 @@ function buildGroupUI(containerId, prefix, readonly) {
           <span class="check">&#10003;</span>
         </div>
         <div class="team away"><span class="flag">${flag(m[1])}</span><span>${m[1]}</span></div>
+        ${timeHtml}
       </div>`;
     });
     div.innerHTML = html;
@@ -712,6 +811,7 @@ function onNameChange() {
 
 function savePredictions() {
   if (!currentUser || !currentPoolId) return;
+  if (isDeadlinePassed()) { showToast('Deadline is verstreken!', true); return; }
   const name = document.getElementById('playerName').value.trim() || 'Anoniem';
   const preds = getAllPredictions();
   localStorage.setItem('wkpool_name', name);
@@ -1120,7 +1220,69 @@ function toggleSection(name) {
 function initAdminView() {
   const savedKey = localStorage.getItem('wkpool_apikey');
   if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
+
+  // Load deadline
+  const dl = poolData.config.deadline;
+  if (dl) {
+    const d = new Date(dl);
+    document.getElementById('deadlineInput').value = d.toISOString().slice(0, 16);
+    document.getElementById('deadlineStatus').innerHTML = `Deadline: <strong style="color:var(--accent)">${d.toLocaleString('nl-NL')}</strong>`;
+  }
 }
+
+// --- Deadline ---
+function isDeadlinePassed() {
+  const dl = poolData.config.deadline;
+  if (!dl) return false;
+  return Date.now() > dl;
+}
+
+function updateDeadlineUI() {
+  const banner = document.getElementById('deadlineBanner');
+  const dl = poolData.config.deadline;
+  const poolScreen = document.getElementById('poolScreen');
+
+  if (!dl) {
+    banner.classList.add('hidden');
+    poolScreen.classList.remove('predictions-locked');
+    return;
+  }
+
+  banner.classList.remove('hidden');
+  const deadline = new Date(dl);
+  const now = Date.now();
+
+  if (now > dl) {
+    banner.className = 'deadline-banner closed';
+    banner.innerHTML = 'Voorspellingen zijn gesloten sinds ' + deadline.toLocaleString('nl-NL');
+    poolScreen.classList.add('predictions-locked');
+  } else {
+    const diff = dl - now;
+    const hours = Math.floor(diff / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    banner.className = 'deadline-banner open';
+    banner.innerHTML = 'Nog <span class="countdown">' + hours + 'u ' + mins + 'min</span> om je voorspellingen in te vullen (deadline: ' + deadline.toLocaleString('nl-NL') + ')';
+    poolScreen.classList.remove('predictions-locked');
+  }
+}
+
+function saveDeadline() {
+  const input = document.getElementById('deadlineInput').value;
+  if (!input) { showToast('Kies een datum en tijd', true); return; }
+  const timestamp = new Date(input).getTime();
+  db.ref(`pools/${currentPoolId}/config/deadline`).set(timestamp)
+    .then(() => showToast('Deadline opgeslagen!'))
+    .catch(err => showToast('Fout: ' + err.message, true));
+}
+
+function clearDeadline() {
+  db.ref(`pools/${currentPoolId}/config/deadline`).remove()
+    .then(() => { showToast('Deadline verwijderd'); document.getElementById('deadlineInput').value = ''; })
+    .catch(err => showToast('Fout: ' + err.message, true));
+}
+
+// Update countdown every minute
+setInterval(() => { if (currentPoolId) updateDeadlineUI(); }, 60000);
 
 // --- Progress ---
 function updateProgress() {
