@@ -2,8 +2,8 @@ name: Fetch WK Results
 
 on:
   schedule:
-    # Elke dag om 21:00 en 23:00 UTC (23:00 en 01:00 NL tijd)
-    - cron: '0 21,23 * * *'
+    # Elke 3 uur tijdens het WK (wedstrijden op verschillende tijdstippen)
+    - cron: '0 1,4,7,16,19,22 * * *'
   workflow_dispatch: # Handmatig triggeren via GitHub
 
 jobs:
