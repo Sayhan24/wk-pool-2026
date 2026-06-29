@@ -1775,6 +1775,7 @@ function updateProgress() {
       if (hEl.value!=='' && aEl.value!=='') { filled++; kf++; matchEl.classList.add('filled'); }
       else { matchEl.classList.remove('filled'); }
     }
+  }
   const pct = total > 0 ? Math.round((filled/total)*100) : 0;
   const bar = document.getElementById('progressBar');
   const label = document.getElementById('progressLabel');
