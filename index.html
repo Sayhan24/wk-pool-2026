@@ -678,7 +678,10 @@ const MATCH_TIMES = {
   'FI_0':'2026-07-19T17:00:00Z',
 };
 
+let unlockMode = window.location.search.includes('unlock');
+
 function getMatchTime(key) {
+  if (unlockMode && key.startsWith('R')) return null; // KO matches unlocked
   return MATCH_TIMES[key] ? new Date(MATCH_TIMES[key]) : null;
 }
 
