@@ -1,0 +1,73 @@
+{
+  "R32": {
+    "0": {
+      "home": "Mexico",
+      "away": "Sweden"
+    },
+    "1": {
+      "home": "Switzerland",
+      "away": "Ecuador"
+    },
+    "2": {
+      "home": "Brazil",
+      "away": "Bosnia and Herzegovina"
+    },
+    "3": {
+      "home": "USA",
+      "away": "Ghana"
+    },
+    "4": {
+      "home": "South Africa",
+      "away": "Canada"
+    },
+    "5": {
+      "home": "Netherlands",
+      "away": "Morocco"
+    },
+    "6": {
+      "home": "Germany",
+      "away": "Australia"
+    },
+    "7": {
+      "home": "Japan",
+      "away": "Ivory Coast"
+    },
+    "8": {
+      "home": "Belgium",
+      "away": "DR Congo"
+    },
+    "9": {
+      "home": "Spain",
+      "away": "Algeria"
+    },
+    "10": {
+      "home": "France",
+      "away": "Paraguay"
+    },
+    "11": {
+      "home": "Argentina",
+      "away": "Senegal"
+    },
+    "12": {
+      "home": "Egypt",
+      "away": "Cape Verde"
+    },
+    "13": {
+      "home": "England",
+      "away": "Norway"
+    },
+    "14": {
+      "home": "Colombia",
+      "away": "Austria"
+    },
+    "15": {
+      "home": "Portugal",
+      "away": "Croatia"
+    }
+  },
+  "R16": {},
+  "QF": {},
+  "SF": {},
+  "TP": {},
+  "FI": {}
+}

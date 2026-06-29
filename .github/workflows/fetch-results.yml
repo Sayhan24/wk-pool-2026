@@ -1,23 +1,30 @@
-name: Fetch WK Results
+name: Fetch WK Results + Advance Bracket
 
 on:
   schedule:
-    # Elke 3 uur tijdens het WK (wedstrijden op verschillende tijdstippen)
+    # Elke 3 uur tijdens het WK
     - cron: '0 1,4,7,16,19,22 * * *'
-  workflow_dispatch: # Handmatig triggeren via GitHub
+  workflow_dispatch: # Handmatig triggeren
 
 jobs:
-  fetch:
+  fetch-and-advance:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Fetch results from Football-Data API
         run: |
           echo "=== WK Pool 2026 - Uitslagen ophalen ==="
 
+          # Haal knockoutDefs op uit Firebase
+          KODEFS=$(curl -s "${{ secrets.FIREBASE_DB_URL }}/pools/${{ secrets.POOL_CODE }}/knockoutDefs.json")
+          echo "Knockout-definities opgehaald."
+
+          # Haal wedstrijden op
           MATCHES=$(curl -s -H "X-Auth-Token: ${{ secrets.FOOTBALL_API_KEY }}" \
             "https://api.football-data.org/v4/competitions/WC/matches?status=FINISHED")
 
-          COUNT=$(echo "$MATCHES" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['resultSet']['count'])" 2>/dev/null || echo "0")
+          COUNT=$(echo "$MATCHES" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('resultSet',{}).get('count',0))" 2>/dev/null || echo "0")
           echo "Afgelopen wedstrijden: $COUNT"
 
           if [ "$COUNT" = "0" ]; then
@@ -25,10 +32,17 @@ jobs:
             exit 0
           fi
 
-          RESULTS=$(echo "$MATCHES" | python3 -c "
-          import sys, json
+          # Verwerk wedstrijden (groep + knockout)
+          RESULTS=$(echo "$MATCHES" | KO_DEFS="$KODEFS" python3 -c "
+          import sys, json, os
 
           data = json.load(sys.stdin)
+          ko_defs_raw = os.environ.get('KO_DEFS', '{}')
+          try:
+              ko_defs = json.loads(ko_defs_raw)
+          except:
+              ko_defs = {}
+
           groups = {
               'A':['Mexico','South Africa','South Korea','Czechia'],
               'B':['Canada','Bosnia and Herzegovina','Qatar','Switzerland'],
@@ -47,7 +61,7 @@ jobs:
           name_map = {
               'Korea Republic':'South Korea','Republic of Korea':'South Korea',
               'Türkiye':'Turkiye','Turkey':'Turkiye',
-              \"Côte d'Ivoire\":'Ivory Coast',
+              \"Côte d'Ivoire\":'Ivory Coast','Cote d Ivoire':'Ivory Coast',
               'Bosnia-Herzegovina':'Bosnia and Herzegovina',
               'United States':'USA','United States of America':'USA',
               'Cabo Verde':'Cape Verde','Cape Verde Islands':'Cape Verde',
@@ -61,16 +75,38 @@ jobs:
           def map_name(n):
               if n in name_map: return name_map[n]
               if n in all_teams: return n
+              lower = n.lower() if n else ''
               for t in all_teams:
-                  if t.lower() == n.lower(): return t
+                  if t.lower() == lower: return t
               return n
 
-          def get_matches(teams):
+          def get_group_matches(teams):
               m = []
               for i in range(len(teams)):
                   for j in range(i+1, len(teams)):
                       m.append((teams[i], teams[j]))
               return m
+
+          # Knockout mapping
+          def find_ko_key(home, away):
+              for round_name in ['R32','R16','QF','SF','TP','FI']:
+                  if round_name not in ko_defs: continue
+                  matches = ko_defs[round_name]
+                  if isinstance(matches, list):
+                      for i, m in enumerate(matches):
+                          if not isinstance(m, dict): continue
+                          if (m.get('home') == home and m.get('away') == away):
+                              return f'{round_name}_{i}'
+                          if (m.get('home') == away and m.get('away') == home):
+                              return f'{round_name}_{i}'
+                  else:
+                      for k, m in matches.items():
+                          if not isinstance(m, dict): continue
+                          if (m.get('home') == home and m.get('away') == away):
+                              return f'{round_name}_{k}'
+                          if (m.get('home') == away and m.get('away') == home):
+                              return f'{round_name}_{k}'
+              return None
 
           results = {}
           for match in data.get('matches', []):
@@ -79,31 +115,52 @@ jobs:
               hs = match['score']['fullTime']['home']
               aws = match['score']['fullTime']['away']
               if hs is None or aws is None: continue
+
+              # Groepsfase
+              found = False
               for letter, teams in groups.items():
-                  for i, (mh, ma) in enumerate(get_matches(teams)):
+                  for i, (mh, ma) in enumerate(get_group_matches(teams)):
                       if mh == home and ma == away:
                           results[f'{letter}_{i}'] = f'{hs}-{aws}'
+                          found = True
                       elif mh == away and ma == home:
                           results[f'{letter}_{i}'] = f'{aws}-{hs}'
+                          found = True
+
+              # Knockout
+              if not found:
+                  ko_key = find_ko_key(home, away)
+                  if ko_key:
+                      results[ko_key] = f'{hs}-{aws}'
 
           print(json.dumps(results))
           ")
 
-          echo "Resultaten: $RESULTS"
+          echo "Verwerkte uitslagen:"
+          echo "$RESULTS" | python3 -m json.tool 2>/dev/null || echo "$RESULTS"
 
-          # Write to Firebase
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH \
-            "${{ secrets.FIREBASE_DB_URL }}/pools/${{ secrets.POOL_CODE }}/results.json" \
-            -d "$RESULTS" \
-            -H "Content-Type: application/json")
+          COUNT_RESULTS=$(echo "$RESULTS" | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo "0")
+          echo "Aantal: $COUNT_RESULTS"
 
-          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-          echo "Firebase response: $HTTP_CODE"
+          if [ "$COUNT_RESULTS" -gt 0 ]; then
+            echo "Opslaan naar Firebase..."
+            RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH \
+              "${{ secrets.FIREBASE_DB_URL }}/pools/${{ secrets.POOL_CODE }}/results.json" \
+              -d "$RESULTS" \
+              -H "Content-Type: application/json")
 
-          if [ "$HTTP_CODE" = "200" ]; then
-            echo "Uitslagen opgeslagen!"
-          else
-            echo "Firebase write mislukt (code $HTTP_CODE)"
-            echo "$RESPONSE"
-            exit 1
+            HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+            echo "Firebase response: $HTTP_CODE"
+
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "Uitslagen opgeslagen!"
+            else
+              echo "Firebase write mislukt (code $HTTP_CODE)"
+              echo "$RESPONSE"
+            fi
           fi
+
+      - name: Advance knockout bracket
+        run: |
+          echo "=== Knockout-bracket bijwerken ==="
+          python3 advance-knockout.py --push || echo "Advancement niet nodig of mislukt (geen complete ronde)"
